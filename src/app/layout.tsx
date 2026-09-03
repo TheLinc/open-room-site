@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { copy } from "@/lib/copy";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,20 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://openroom.dev"),
-  title: "Open Room",
-  description:
-    "Run several named Claude Code agents at once, addressed by voice or chat.",
+  title: copy.siteName,
+  description: copy.description,
+  openGraph: {
+    title: copy.headline,
+    description: copy.description,
+    url: "https://openroom.dev",
+    siteName: copy.siteName,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: copy.headline,
+    description: copy.description,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -25,7 +37,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        {children}
+      </body>
     </html>
   );
 }
