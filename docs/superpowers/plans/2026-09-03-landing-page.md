@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship the one-page Open Room coming-soon site: an animated hero built from eight generated stills and typed text, four story sections, a waitlist form backed by Resend, and an Open Graph image.
+**Goal:** Ship the one-page Open Room coming-soon site: a hero with a looping video of the agents typing under a typed text script, four story sections with posed stills, a waitlist form backed by Resend, and an Open Graph image.
 
-**Architecture:** A single Next.js App Router page. Server components render copy and layout. One client component owns a clock and derives the hero state from a pure, tested timeline function; it swaps stacked images by opacity and types text. The waitlist is a server action that posts to Resend's contacts API through a small tested module. Frames are cropped from the approved 2k masters by a script into committed WebP files.
+**Architecture:** A single Next.js App Router page. Server components render copy and layout. One client component owns a clock and derives the text state from a pure, tested timeline function; the room beside it is a muted looping `<video>` with a poster still. The waitlist is a server action that posts to Resend's contacts API through a small tested module. Stills are cropped from the approved 2k masters by a script into committed WebP files; the loop is encoded from the approved clip by a second script into committed WebM and MP4 files.
 
-**Tech Stack:** Next.js 16.3.4 (App Router, `src/` layout, `@/*` alias), React 19.2, TypeScript 5, Tailwind CSS 4, Geist Sans and Geist Mono via `next/font/google`, Vitest with React Testing Library, `sharp` for the frame build script, Resend REST API with `fetch`. Node 22.
+**Tech Stack:** Next.js 16.3.4 (App Router, `src/` layout, `@/*` alias), React 19.2, TypeScript 5, Tailwind CSS 4, Geist Sans and Geist Mono via `next/font/google`, Vitest with React Testing Library, `sharp` for the still build script, `ffmpeg` on PATH for the video build script, Resend REST API with `fetch`. Node 22.
 
 **Spec:** `docs/superpowers/specs/2026-09-03-hero-art-direction-design.md`. Copy inputs: `copy/company-brain.md`. Art records: `assets/higgsfield/keyframes/README.md`.
 
@@ -17,9 +17,10 @@
 - No navigation bar. One footer link, to https://github.com/TheLinc/open-room. No analytics, no third-party scripts.
 - Page background is `#010206`, the sampled background of the generated frames. Foreground `#ededed`.
 - Agent colours: teal `#06b6d4`, red `#f43f5e`, purple `#8b5cf6`. Teal is Juno, red is Atlas, purple is unnamed.
-- Hero loop is 18000 ms, typing at 45 ms per character, cross-fades 300 ms, text fade from 17400 ms. Reduced motion shows frame F1 with the first talk line complete and no cycling.
-- All animation text is rendered by the site. No text is baked into images.
-- Next 16 deprecates `priority` on `next/image`; use `preload`. The docs say not to combine `preload` with `loading`, so the first frame gets `preload` and the others get `loading="eager"`. Do not read Next docs from memory; the version's docs are in `node_modules/next/dist/docs/`.
+- The hero room is the ambient loop: muted, autoplaying, looping, inline, with the rest frame as poster. Reduced motion shows the rest frame still with the first talk line complete and no cycling.
+- Text script is 18000 ms, typing at 45 ms per character, text fade from 17400 ms. All animation text is rendered by the site. No text is baked into the video or images.
+- Every still is a square crop centred at three quarters of the source frame width, at most 1440 px, matching the video. Video and stills all fade their outer 6 % on every edge so no encoded black edge ever shows against the page.
+- Next 16 deprecates `priority` on `next/image`; use `preload`. Do not read Next docs from memory; the version's docs are in `node_modules/next/dist/docs/`.
 - Waitlist: `POST https://api.resend.com/contacts` with `Authorization: Bearer <RESEND_API_KEY>`, body `{ email, unsubscribed: false }` plus `segments: [{ id }]` when `RESEND_SEGMENT_ID` is set.
 - `next dev` rewrites the block in `AGENTS.md`. Commit that change with your work rather than reverting it.
 - Every task ends with `npm run lint` and `npm test` passing before its commit.
@@ -32,74 +33,81 @@ Create:
 
 - `.env.example`: names of the two Resend variables.
 - `vitest.config.mts`: Vitest with jsdom, React plugin, tsconfig paths.
-- `scripts/build-room-frames.mjs`: crops the 2k masters into `src/assets/room/*.webp` and `og-room.png`.
-- `src/assets/room/F1.webp` … `F5.webp`, `S1.webp`, `S2.webp`, `S4.webp`, `og-room.png`: generated, committed.
+- `scripts/build-room-frames.mjs`: crops the masters into `src/assets/room/*.webp` and `og-room.png`.
+- `scripts/build-room-video.mjs`: encodes the loop into `public/room/loop.webm` and `loop.mp4` and writes `src/assets/room/loop.json`.
+- `src/assets/room/F1.webp`, `F4.webp`, `S1.webp`, `S2.webp`, `S4.webp`, `og-room.png`, `loop.json`: generated, committed.
+- `public/room/loop.webm`, `public/room/loop.mp4`: generated, committed.
 - `src/lib/copy.ts`: every string on the page.
-- `src/lib/hero-script.ts`: the timeline and `stateAt(ms)`.
+- `src/lib/hero-script.ts`: the text timeline and `stateAt(ms)`.
 - `src/lib/hero-script.test.ts`
-- `src/lib/room-frames.ts`: static imports of the frames keyed by id.
+- `src/lib/room-frames.ts`: static imports of the stills.
 - `src/lib/room-frames.test.ts`: dimension invariants of the generated files.
+- `src/lib/room-loop.test.ts`: invariants of the encoded video.
 - `src/lib/waitlist.ts`: email validation and the Resend call, injected `fetch`.
 - `src/lib/waitlist.test.ts`
 - `src/lib/use-prefers-reduced-motion.ts`: media query hook.
 - `src/app/actions.ts`: the `joinWaitlist` server action.
 - `src/app/opengraph-image.tsx`: generated OG image.
 - `src/components/hero.tsx`: server. Hero section shell, copy, hidden narration, form.
-- `src/components/hero-loop.tsx`: client. Owns the clock, lays out the hero grid, renders `TalkPanel` and `RoomScene`.
+- `src/components/hero-loop.tsx`: client. Owns the clock, lays out the hero grid, renders `TalkPanel` and `RoomLoop`.
 - `src/components/talk-panel.tsx`: client, pure render of a `HeroState`.
 - `src/components/talk-panel.test.tsx`
-- `src/components/room-scene.tsx`: client. Five stacked frames, one visible.
+- `src/components/room-loop.tsx`: client. The looping video, or the still under reduced motion.
+- `src/components/room-loop.test.tsx`
 - `src/components/waitlist-form.tsx`: client. `useActionState` form.
 - `src/components/waitlist-form.test.tsx`
-- `src/components/beat-section.tsx`: server. One story beat: heading, line, frame.
-- `src/components/final-cta.tsx`: server. Headline repeated, form, frame F1.
+- `src/components/beat-section.tsx`: server. One story beat: heading, line, still.
+- `src/components/final-cta.tsx`: server. Headline repeated, form, rest frame.
 - `src/components/site-footer.tsx`: server. One link.
 
 Modify:
 
-- `.gitignore`: ignore draft art, keep masters.
+- `.gitignore`: ignore draft art and video analysis files, keep masters and the clip.
 - `package.json`: scripts and dev dependencies.
-- `src/app/globals.css`: dark theme only, agent colour tokens, font variables.
+- `src/app/globals.css`: dark theme only, agent colour tokens, font variables, the edge fade class.
 - `src/app/layout.tsx`: metadata, body classes.
 - `src/app/page.tsx`: compose the page.
-- `README.md`: env vars and the frame build script.
+- `README.md`: env vars and the two build scripts.
 
 ---
 
-### Task 1: Keep the art masters, ignore the drafts
+### Task 1: Keep the art masters and the clip, ignore the drafts
 
 **Files:**
 - Modify: `.gitignore`
-- Commit: `assets/higgsfield/mascot-sheet.jpg`, `assets/higgsfield/keyframes/README.md`, `assets/higgsfield/keyframes/iso-test/pose/rest.png`, `assets/higgsfield/keyframes/hero/2k/*.png`, `assets/higgsfield/keyframes/sections/*.png`, `assets/higgsfield/keyframes/sections/2k/*.png`
+- Commit: `assets/higgsfield/mascot-sheet.jpg`, `assets/higgsfield/keyframes/README.md`, `assets/higgsfield/keyframes/iso-test/pose/rest.png`, `assets/higgsfield/keyframes/hero/2k/*.png` (including `F1-square.png`), `assets/higgsfield/keyframes/hero/video/loop-test-v1.mp4`, `assets/higgsfield/keyframes/sections/*.png`, `assets/higgsfield/keyframes/sections/2k/*.png`
 
 **Interfaces:**
-- Produces: the master files at the paths the build script in Task 3 reads.
+- Produces: the master files at the paths the build scripts in Task 3 read.
 
-- [ ] **Step 1: Add ignore rules for draft and rejected art**
+- [ ] **Step 1: Add ignore rules for draft art and analysis output**
 
 Append to `.gitignore`:
 
 ```gitignore
 
-# generated art: keep the approved masters and the README, ignore drafts, tests and rejects
+# generated art: keep the approved masters, the clip and the README; ignore drafts, tests, rejects and analysis output
 assets/higgsfield/keyframes/base/
 assets/higgsfield/keyframes/react/
 assets/higgsfield/keyframes/iso-test/*.png
 assets/higgsfield/keyframes/iso-test/pose/called*
 assets/higgsfield/keyframes/hero/*.png
+assets/higgsfield/keyframes/hero/video/frames/
+assets/higgsfield/keyframes/hero/video/full/
+assets/higgsfield/keyframes/hero/video/*.png
 assets/higgsfield/keyframes/sections/S4-rejected*
 ```
 
 - [ ] **Step 2: Check what will be committed**
 
 Run: `git add -n assets .gitignore`
-Expected: the list contains `mascot-sheet.jpg`, `keyframes/README.md`, `iso-test/pose/rest.png`, five files under `hero/2k/`, `sections/S1-name-them.png`, `sections/S2-all-working.png`, `sections/S4-far-away.png`, two files under `sections/2k/`. It contains nothing from `base/`, `react/`, no `iso-v*.png`, no `called*`, no `hero/F*.png` at the top level, no `S4-rejected*`.
+Expected: the list contains `mascot-sheet.jpg`, `keyframes/README.md`, `iso-test/pose/rest.png`, six files under `hero/2k/` (five frames plus `F1-square.png`), `hero/video/loop-test-v1.mp4`, `sections/S1-name-them.png`, `sections/S2-all-working.png`, `sections/S4-far-away.png`, two files under `sections/2k/`. It contains nothing from `base/`, `react/`, no `iso-v*.png`, no `called*`, no `hero/F*.png` at the top level, nothing under `hero/video/frames/` or `hero/video/full/`, no `hero/video/*.png`, no `S4-rejected*`.
 
 - [ ] **Step 3: Commit**
 
 ```bash
 git add .gitignore assets
-git commit -m "chore: keep approved art masters, ignore drafts"
+git commit -m "chore: keep approved art masters and the hero loop, ignore drafts"
 ```
 
 ---
@@ -135,7 +143,8 @@ In `package.json`, replace the `scripts` block with:
   "lint": "eslint",
   "test": "vitest run",
   "test:watch": "vitest",
-  "build:frames": "node scripts/build-room-frames.mjs"
+  "build:frames": "node scripts/build-room-frames.mjs",
+  "build:video": "node scripts/build-room-video.mjs"
 }
 ```
 
@@ -198,7 +207,8 @@ export const copy = {
   subheadline:
     "Give each Claude Code agent a name, a voice and its own folder. Say hey and the name from wherever you are, and it comes back when it's done or stuck.",
   narration:
-    "Example: say hey Juno, run the tests. Juno turns to you, then gets to work. Ask Atlas a question while he works and he answers straight away, then reports back when the job is done.",
+    "Example: say hey Juno, run the tests. Juno gets to work. Ask Atlas a question while he works and he answers straight away, then reports back when the job is done.",
+  roomAlt: "A small dark room where three voxel agents, teal, red and purple, type at their own desks lit by their screens.",
   cta: {
     label: "Email address",
     placeholder: "you@example.com",
@@ -259,23 +269,25 @@ git commit -m "chore: vitest setup and page copy module"
 
 ---
 
-### Task 3: Build the room frames from the masters
+### Task 3: Build the stills and the loop from the masters
 
 **Files:**
 - Create: `scripts/build-room-frames.mjs`
+- Create: `scripts/build-room-video.mjs`
 - Create: `src/lib/room-frames.ts`
 - Create: `src/lib/room-frames.test.ts`
-- Generated: `src/assets/room/F1.webp`, `F2.webp`, `F3.webp`, `F4.webp`, `F5.webp`, `S1.webp`, `S2.webp`, `S4.webp`, `og-room.png`
+- Create: `src/lib/room-loop.test.ts`
+- Generated: `src/assets/room/F1.webp`, `F4.webp`, `S1.webp`, `S2.webp`, `S4.webp`, `og-room.png`, `loop.json`, `public/room/loop.webm`, `public/room/loop.mp4`
 
 **Interfaces:**
-- Consumes: master PNGs from Task 1.
-- Produces: `heroFrames: Record<FrameId, StaticImageData>` and `sectionFrames: Record<BeatId, StaticImageData>` from `@/lib/room-frames`; `FrameId` type is defined in Task 4's module, so this task defines it here first and Task 4 re-exports it.
+- Consumes: masters and the clip from Task 1. `ffmpeg` and `ffprobe` on PATH (installed on this machine through winget).
+- Produces: `restFrame: StaticImageData` and `sectionFrames: Record<BeatId, StaticImageData>` from `@/lib/room-frames`; `loop.json` with `{ width, height, duration, frames, mp4Bytes, webmBytes }`; the two video files at `/room/loop.webm` and `/room/loop.mp4`.
 
 - [ ] **Step 1: Install sharp**
 
 Run: `npm install -D sharp`
 
-- [ ] **Step 2: Write the failing dimensions test**
+- [ ] **Step 2: Write the failing stills test**
 
 Create `src/lib/room-frames.test.ts`:
 
@@ -291,101 +303,180 @@ async function size(file: string) {
   return { width: meta.width, height: meta.height };
 }
 
-describe("room frames", () => {
-  test("hero frames share one size so the cross-fade never shifts", async () => {
-    const sizes = await Promise.all(
-      ["F1.webp", "F2.webp", "F3.webp", "F4.webp", "F5.webp"].map(size),
-    );
-    for (const s of sizes) expect(s).toEqual(sizes[0]);
-    // 2544 by 2160 scaled to 1600 wide: 2160 * 1600 / 2544 = 1358.49, sharp rounds to 1358
-    expect(sizes[0]).toEqual({ width: 1600, height: 1358 });
+describe("room stills", () => {
+  test("stills cut from the 2k masters are 1440 px squares, matching the loop", async () => {
+    for (const file of ["F1.webp", "F4.webp", "S1.webp", "S2.webp"]) {
+      expect(await size(file)).toEqual({ width: 1440, height: 1440 });
+    }
   });
 
-  test("section frames exist at the expected sizes", async () => {
-    expect(await size("S1.webp")).toEqual({ width: 1600, height: 1358 });
-    expect(await size("S2.webp")).toEqual({ width: 1600, height: 1358 });
-    expect(await size("S4.webp")).toEqual({ width: 792, height: 672 });
-    expect(await size("og-room.png")).toEqual({ width: 1200, height: 1019 });
+  test("the far-away still keeps its native square size", async () => {
+    expect(await size("S4.webp")).toEqual({ width: 672, height: 672 });
+  });
+
+  test("the Open Graph source is a 1200 px square PNG", async () => {
+    expect(await size("og-room.png")).toEqual({ width: 1200, height: 1200 });
   });
 });
 ```
 
-- [ ] **Step 3: Run it to see it fail**
+- [ ] **Step 3: Write the failing loop test**
 
-Run: `npm test -- room-frames`
-Expected: FAIL, input file is missing.
+Create `src/lib/room-loop.test.ts`:
 
-- [ ] **Step 4: Write the build script**
+```ts
+import { describe, expect, test } from "vitest";
+import { stat } from "node:fs/promises";
+import { join } from "node:path";
+import loop from "@/assets/room/loop.json";
+
+const MAX_BYTES = 3 * 1024 * 1024;
+
+describe("room loop", () => {
+  test("is a five second 1080 px square", () => {
+    expect(loop.width).toBe(1080);
+    expect(loop.height).toBe(1080);
+    expect(loop.duration).toBeGreaterThan(4.9);
+    expect(loop.duration).toBeLessThan(5.2);
+    expect(loop.frames).toBeGreaterThanOrEqual(120);
+  });
+
+  test("both encodes exist and are small enough for a hero", async () => {
+    const mp4 = await stat(join(process.cwd(), "public/room/loop.mp4"));
+    const webm = await stat(join(process.cwd(), "public/room/loop.webm"));
+    expect(mp4.size).toBe(loop.mp4Bytes);
+    expect(webm.size).toBe(loop.webmBytes);
+    expect(mp4.size).toBeLessThan(MAX_BYTES);
+    expect(webm.size).toBeLessThan(MAX_BYTES);
+  });
+});
+```
+
+- [ ] **Step 4: Run both to see them fail**
+
+Run: `npm test -- room-`
+Expected: FAIL, input file is missing and cannot find module `@/assets/room/loop.json`.
+
+- [ ] **Step 5: Write the stills script**
 
 Create `scripts/build-room-frames.mjs`:
 
 ```js
-// Crops the approved masters to the room half of the frame and writes web-sized files.
-// The left half of every master is empty background; the page draws that itself.
+// Crops the approved masters to a square around the room and writes web-sized files.
+// The room sits at three quarters of every source frame's width; the rest is empty
+// background that the page draws itself. The same crop is used for the hero video.
 import sharp from "sharp";
 import { mkdir } from "node:fs/promises";
 
 const IN = "assets/higgsfield/keyframes";
 const OUT = "src/assets/room";
 
-// Fractions of the source frame. The room sits in the right half with glow falloff around it.
-const BOX = { left: 0.5, top: 0, width: 0.5, height: 1 };
-const MAX_WIDTH = 1600;
+const ROOM_CENTRE_X = 0.75;
+const MAX_SIDE = 1440;
 const WEBP_QUALITY = 82;
 
-const frames = [
+const stills = [
   ["F1", `${IN}/hero/2k/F1-rest-atlas-working.png`],
-  ["F2", `${IN}/hero/2k/F2-juno-called.png`],
-  ["F3", `${IN}/hero/2k/F3-both-working.png`],
   ["F4", `${IN}/hero/2k/F4-atlas-called.png`],
-  ["F5", `${IN}/hero/2k/F5-atlas-reports.png`],
   ["S1", `${IN}/sections/2k/S1-name-them.png`],
   ["S2", `${IN}/sections/2k/S2-all-working.png`],
   ["S4", `${IN}/sections/S4-far-away.png`],
 ];
 
-async function region(file) {
-  const meta = await sharp(file).metadata();
-  return {
-    left: Math.round(meta.width * BOX.left),
-    top: Math.round(meta.height * BOX.top),
-    width: Math.round(meta.width * BOX.width),
-    height: Math.round(meta.height * BOX.height),
-  };
+async function squareRegion(file) {
+  const { width, height } = await sharp(file).metadata();
+  const side = height;
+  const left = Math.round(width * ROOM_CENTRE_X - side / 2);
+  if (left < 0 || left + side > width) throw new Error(`${file}: square crop falls outside the frame`);
+  return { left, top: 0, width: side, height: side };
 }
 
 await mkdir(OUT, { recursive: true });
 
-for (const [id, file] of frames) {
-  const r = await region(file);
+for (const [id, file] of stills) {
+  const r = await squareRegion(file);
   await sharp(file)
     .extract(r)
-    .resize({ width: Math.min(r.width, MAX_WIDTH) })
+    .resize({ width: Math.min(r.width, MAX_SIDE) })
     .webp({ quality: WEBP_QUALITY })
     .toFile(`${OUT}/${id}.webp`);
   console.log(id, "from", file, r);
 }
 
-// PNG copy of F1 for the Open Graph route, which cannot read WebP.
+// PNG copy of the rest frame for the Open Graph route, which cannot read WebP.
 {
-  const [, file] = frames[0];
-  const r = await region(file);
+  const [, file] = stills[0];
+  const r = await squareRegion(file);
   await sharp(file).extract(r).resize({ width: 1200 }).png().toFile(`${OUT}/og-room.png`);
   console.log("og-room.png from", file);
 }
 ```
 
-- [ ] **Step 5: Run the script**
+- [ ] **Step 6: Write the video script**
 
-Run: `npm run build:frames`
-Expected: nine lines of output, and `ls src/assets/room` shows eight `.webp` files and `og-room.png`. Each hero WebP is under 400 KB (`ls -la src/assets/room`).
+Create `scripts/build-room-video.mjs`:
 
-- [ ] **Step 6: Run the test again**
+```js
+// Encodes the approved loop for the web: H.264 MP4 for everything, VP9 WebM where
+// supported, both silent, 1080 px square, and a JSON manifest the site and tests read.
+import { execFileSync } from "node:child_process";
+import { mkdir, stat, writeFile } from "node:fs/promises";
 
-Run: `npm test -- room-frames`
-Expected: PASS.
+const SRC = "assets/higgsfield/keyframes/hero/video/loop-test-v1.mp4";
+const OUT = "public/room";
+const MANIFEST = "src/assets/room/loop.json";
+const SIDE = 1080;
 
-- [ ] **Step 7: Create the frames module**
+await mkdir(OUT, { recursive: true });
+
+const input = ["-y", "-v", "error", "-i", SRC, "-an", "-vf", `scale=${SIDE}:${SIDE}:flags=lanczos`];
+
+execFileSync(
+  "ffmpeg",
+  [...input, "-c:v", "libx264", "-preset", "slow", "-crf", "23", "-pix_fmt", "yuv420p", "-movflags", "+faststart", `${OUT}/loop.mp4`],
+  { stdio: "inherit" },
+);
+
+execFileSync(
+  "ffmpeg",
+  [...input, "-c:v", "libvpx-vp9", "-crf", "33", "-b:v", "0", "-row-mt", "1", "-pix_fmt", "yuv420p", `${OUT}/loop.webm`],
+  { stdio: "inherit" },
+);
+
+const probe = JSON.parse(
+  execFileSync("ffprobe", [
+    "-v", "error",
+    "-select_streams", "v:0",
+    "-show_entries", "stream=width,height,nb_frames,duration",
+    "-of", "json",
+    `${OUT}/loop.mp4`,
+  ]).toString(),
+);
+const stream = probe.streams[0];
+
+const manifest = {
+  width: stream.width,
+  height: stream.height,
+  duration: Number(stream.duration),
+  frames: Number(stream.nb_frames),
+  mp4Bytes: (await stat(`${OUT}/loop.mp4`)).size,
+  webmBytes: (await stat(`${OUT}/loop.webm`)).size,
+};
+await writeFile(MANIFEST, `${JSON.stringify(manifest, null, 2)}\n`);
+console.log(manifest);
+```
+
+- [ ] **Step 7: Run both scripts**
+
+Run: `npm run build:frames && npm run build:video`
+Expected: six lines from the stills script, then a manifest object with `width: 1080`, `height: 1080`, `duration` near 5.04, `frames: 121`, and both byte counts under 3 MB. `ls src/assets/room public/room` shows five `.webp`, `og-room.png`, `loop.json`, `loop.mp4`, `loop.webm`.
+
+- [ ] **Step 8: Run the tests again**
+
+Run: `npm test -- room-`
+Expected: PASS, 5 tests.
+
+- [ ] **Step 9: Create the frames module**
 
 Create `src/lib/room-frames.ts`:
 
@@ -393,19 +484,13 @@ Create `src/lib/room-frames.ts`:
 import type { StaticImageData } from "next/image";
 import type { BeatId } from "@/lib/copy";
 import F1 from "@/assets/room/F1.webp";
-import F2 from "@/assets/room/F2.webp";
-import F3 from "@/assets/room/F3.webp";
 import F4 from "@/assets/room/F4.webp";
-import F5 from "@/assets/room/F5.webp";
 import S1 from "@/assets/room/S1.webp";
 import S2 from "@/assets/room/S2.webp";
 import S4 from "@/assets/room/S4.webp";
 
-export type FrameId = "F1" | "F2" | "F3" | "F4" | "F5";
-
-export const heroFrames: Record<FrameId, StaticImageData> = { F1, F2, F3, F4, F5 };
-
-export const heroFrameIds: FrameId[] = ["F1", "F2", "F3", "F4", "F5"];
+// The rest frame: video poster, reduced-motion fallback, final call to action.
+export const restFrame: StaticImageData = F1;
 
 export const sectionFrames: Record<BeatId, StaticImageData> = {
   name: S1,
@@ -415,29 +500,28 @@ export const sectionFrames: Record<BeatId, StaticImageData> = {
 };
 ```
 
-- [ ] **Step 8: Type-check, lint, test**
+- [ ] **Step 10: Type-check, lint, test**
 
 Run: `npx tsc --noEmit && npm run lint && npm test`
 Expected: all clean. If `tsc` cannot resolve `*.webp`, confirm `next-env.d.ts` exists at the repo root (it is generated by `next dev` or `next build`; run `npx next build` once if missing).
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 11: Commit**
 
 ```bash
-git add scripts/build-room-frames.mjs src/assets/room src/lib/room-frames.ts src/lib/room-frames.test.ts package.json package-lock.json
-git commit -m "feat: build web-sized room frames from the approved masters"
+git add scripts/build-room-frames.mjs scripts/build-room-video.mjs src/assets/room public/room src/lib/room-frames.ts src/lib/room-frames.test.ts src/lib/room-loop.test.ts package.json package-lock.json
+git commit -m "feat: build web stills and the hero loop from the approved masters"
 ```
 
 ---
 
-### Task 4: The hero timeline as a pure function
+### Task 4: The text timeline as a pure function
 
 **Files:**
 - Create: `src/lib/hero-script.ts`
 - Create: `src/lib/hero-script.test.ts`
 
 **Interfaces:**
-- Consumes: `FrameId` from `@/lib/room-frames`.
-- Produces: `stateAt(elapsedMs: number): HeroState`, `reducedMotionState(): HeroState`, constants `CHAR_MS`, `LOOP_MS`, `FADE_AT_MS`, types `HeroState`, `AgentColor`, `Pip`, `Reply`.
+- Produces: `stateAt(elapsedMs: number): HeroState`, `reducedMotionState(): HeroState`, constants `CHAR_MS`, `LOOP_MS`, `FADE_AT_MS`, `SCRIPT`, types `HeroState`, `AgentColor`, `Pip`, `Reply`, `Talk`.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -460,52 +544,43 @@ describe("hero script", () => {
     expect(times).toEqual([...times].sort((a, b) => a - b));
   });
 
-  test("opens at rest with Atlas already working", () => {
+  test("opens with Atlas already working and nothing said", () => {
     const s = stateAt(0);
-    expect(s.frame).toBe("F1");
     expect(s.talk).toBeNull();
     expect(s.replies).toEqual([]);
     expect(s.pips).toEqual([{ name: "Atlas", color: "red", status: "working" }]);
     expect(s.fading).toBe(false);
   });
 
-  test("types the first line and turns Juno on her name", () => {
+  test("types the first line at 45 ms per character", () => {
     expect(stateAt(1000).talk).toEqual({ color: "teal", typed: "", full: "hey Juno, run the tests" });
-    const before = stateAt(1000 + 7 * CHAR_MS);
-    expect(before.talk?.typed).toBe("hey Jun");
-    expect(before.frame).toBe("F1");
-    const onName = stateAt(1000 + 8 * CHAR_MS);
-    expect(onName.talk?.typed).toBe("hey Juno");
-    expect(onName.frame).toBe("F2");
+    expect(stateAt(1000 + 7 * CHAR_MS).talk?.typed).toBe("hey Jun");
+    expect(stateAt(1000 + 8 * CHAR_MS).talk?.typed).toBe("hey Juno");
     expect(stateAt(3000).talk?.typed).toBe("hey Juno, run the tests");
   });
 
   test("both work at four seconds", () => {
-    const s = stateAt(4000);
-    expect(s.frame).toBe("F3");
-    expect(s.pips.map((p) => p.name)).toEqual(["Atlas", "Juno"]);
+    expect(stateAt(4000).pips.map((p) => p.name)).toEqual(["Atlas", "Juno"]);
   });
 
-  test("asks Atlas and turns him on his name", () => {
+  test("asks Atlas while he works", () => {
     expect(stateAt(6000).talk).toEqual({
       color: "red",
       typed: "",
       full: "hey Atlas, what's the status of my CI pipeline?",
     });
-    expect(stateAt(6000).frame).toBe("F3");
-    expect(stateAt(6000 + 9 * CHAR_MS).frame).toBe("F4");
+    expect(stateAt(6000).pips).toHaveLength(2);
   });
 
-  test("Atlas answers immediately, then reports and hops off his chair", () => {
-    const answer = stateAt(9500);
-    expect(answer.replies).toEqual([{ name: "Atlas", color: "red", text: "Let me check that for you." }]);
-    expect(answer.frame).toBe("F3");
+  test("Atlas answers immediately, then reports", () => {
+    expect(stateAt(9500).replies).toEqual([
+      { name: "Atlas", color: "red", text: "Let me check that for you." },
+    ]);
     const report = stateAt(13500);
     expect(report.replies.map((r) => r.text)).toEqual([
       "Let me check that for you.",
       "The CI pipeline ran successfully.",
     ]);
-    expect(report.frame).toBe("F5");
     expect(report.pips).toEqual([
       { name: "Atlas", color: "red", status: "done" },
       { name: "Juno", color: "teal", status: "working" },
@@ -519,9 +594,8 @@ describe("hero script", () => {
     expect(stateAt(LOOP_MS + 1360)).toEqual(stateAt(1360));
   });
 
-  test("reduced motion shows the rest frame with the first line complete", () => {
+  test("reduced motion shows the first line complete and never fades", () => {
     const s = reducedMotionState();
-    expect(s.frame).toBe("F1");
     expect(s.talk?.typed).toBe("hey Juno, run the tests");
     expect(s.fading).toBe(false);
   });
@@ -538,9 +612,6 @@ Expected: FAIL, cannot find module `@/lib/hero-script`.
 Create `src/lib/hero-script.ts`:
 
 ```ts
-import type { FrameId } from "@/lib/room-frames";
-
-export type { FrameId };
 export type AgentColor = "teal" | "red";
 export type PipStatus = "working" | "done";
 
@@ -563,7 +634,6 @@ export interface Talk {
 }
 
 export interface HeroState {
-  frame: FrameId;
   talk: Talk | null;
   replies: Reply[];
   pips: Pip[];
@@ -575,59 +645,32 @@ export const LOOP_MS = 18000;
 export const FADE_AT_MS = 17400;
 
 export type ScriptEvent =
-  | { at: number; kind: "frame"; frame: FrameId }
   | { at: number; kind: "pips"; pips: Pip[] }
   | { at: number; kind: "reply"; reply: Reply }
-  | {
-      at: number;
-      kind: "talk";
-      color: AgentColor;
-      text: string;
-      nameChars: number;
-      frameOnName: FrameId;
-    };
+  | { at: number; kind: "talk"; color: AgentColor; text: string };
 
 const atlasWorking: Pip = { name: "Atlas", color: "red", status: "working" };
 const junoWorking: Pip = { name: "Juno", color: "teal", status: "working" };
 const atlasDone: Pip = { name: "Atlas", color: "red", status: "done" };
 
-// Times in ms from loop start. Frame changes on a name happen when the name's last
-// character is typed, so they are derived from the talk event rather than listed.
+// Times in ms from loop start. A talk event replaces the current talk line and types
+// it out from that moment; replies accumulate until the loop restarts.
 export const SCRIPT: ScriptEvent[] = [
-  { at: 0, kind: "frame", frame: "F1" },
   { at: 0, kind: "pips", pips: [atlasWorking] },
-  {
-    at: 1000,
-    kind: "talk",
-    color: "teal",
-    text: "hey Juno, run the tests",
-    nameChars: "hey Juno".length,
-    frameOnName: "F2",
-  },
-  { at: 4000, kind: "frame", frame: "F3" },
+  { at: 1000, kind: "talk", color: "teal", text: "hey Juno, run the tests" },
   { at: 4000, kind: "pips", pips: [atlasWorking, junoWorking] },
-  {
-    at: 6000,
-    kind: "talk",
-    color: "red",
-    text: "hey Atlas, what's the status of my CI pipeline?",
-    nameChars: "hey Atlas".length,
-    frameOnName: "F4",
-  },
+  { at: 6000, kind: "talk", color: "red", text: "hey Atlas, what's the status of my CI pipeline?" },
   { at: 9500, kind: "reply", reply: { name: "Atlas", color: "red", text: "Let me check that for you." } },
-  { at: 9500, kind: "frame", frame: "F3" },
   {
     at: 13500,
     kind: "reply",
     reply: { name: "Atlas", color: "red", text: "The CI pipeline ran successfully." },
   },
-  { at: 13500, kind: "frame", frame: "F5" },
   { at: 13500, kind: "pips", pips: [atlasDone, junoWorking] },
 ];
 
 export function stateAt(elapsedMs: number): HeroState {
   const t = ((elapsedMs % LOOP_MS) + LOOP_MS) % LOOP_MS;
-  let frame: FrameId = "F1";
   let pips: Pip[] = [];
   let talk: Talk | null = null;
   const replies: Reply[] = [];
@@ -635,9 +678,6 @@ export function stateAt(elapsedMs: number): HeroState {
   for (const ev of SCRIPT) {
     if (ev.at > t) break;
     switch (ev.kind) {
-      case "frame":
-        frame = ev.frame;
-        break;
       case "pips":
         pips = ev.pips;
         break;
@@ -647,17 +687,16 @@ export function stateAt(elapsedMs: number): HeroState {
       case "talk": {
         const chars = Math.min(ev.text.length, Math.floor((t - ev.at) / CHAR_MS));
         talk = { color: ev.color, typed: ev.text.slice(0, chars), full: ev.text };
-        if (chars >= ev.nameChars) frame = ev.frameOnName;
         break;
       }
     }
   }
 
-  return { frame, talk, replies, pips, fading: t >= FADE_AT_MS };
+  return { talk, replies, pips, fading: t >= FADE_AT_MS };
 }
 
 export function reducedMotionState(): HeroState {
-  return { ...stateAt(3000), frame: "F1", fading: false };
+  return { ...stateAt(3000), fading: false };
 }
 ```
 
@@ -672,7 +711,7 @@ Run: `npm run lint`
 
 ```bash
 git add src/lib/hero-script.ts src/lib/hero-script.test.ts
-git commit -m "feat: hero timeline as a pure function"
+git commit -m "feat: hero text timeline as a pure function"
 ```
 
 ---
@@ -684,7 +723,7 @@ git commit -m "feat: hero timeline as a pure function"
 - Modify: `src/app/layout.tsx`
 
 **Interfaces:**
-- Produces: Tailwind colour utilities `agent-teal`, `agent-red`, `agent-purple` (as `text-agent-teal`, `bg-agent-red`, and so on), `font-sans` and `font-mono` bound to Geist.
+- Produces: Tailwind colour utilities `agent-teal`, `agent-red`, `agent-purple` (as `text-agent-teal`, `bg-agent-red`, and so on), `font-sans` and `font-mono` bound to Geist, and the `room-fade` class that fades every edge of a room image or video into the page.
 
 - [ ] **Step 1: Replace globals.css**
 
@@ -716,6 +755,17 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Fades the outer 6% of a room still or video on every edge, so an encoded or
+   compressed black never shows as a box against the page background. The room
+   itself starts 7% in from each edge of the square crop. */
+.room-fade {
+  mask-image:
+    linear-gradient(to right, transparent, black 6%, black 94%, transparent),
+    linear-gradient(to bottom, transparent, black 6%, black 94%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -791,23 +841,24 @@ Run: `npm run lint && npm test`
 
 ```bash
 git add src/app/globals.css src/app/layout.tsx AGENTS.md
-git commit -m "feat: dark theme, agent colour tokens and site metadata"
+git commit -m "feat: dark theme, agent colour tokens, edge fade and site metadata"
 ```
 
 ---
 
-### Task 6: Room scene, talk panel and the hero loop
+### Task 6: Room loop, talk panel and the hero loop
 
 **Files:**
 - Create: `src/lib/use-prefers-reduced-motion.ts`
-- Create: `src/components/room-scene.tsx`
+- Create: `src/components/room-loop.tsx`
+- Create: `src/components/room-loop.test.tsx`
 - Create: `src/components/talk-panel.tsx`
 - Create: `src/components/talk-panel.test.tsx`
 - Create: `src/components/hero-loop.tsx`
 
 **Interfaces:**
-- Consumes: `stateAt`, `reducedMotionState`, `HeroState`, `AgentColor` from `@/lib/hero-script`; `heroFrames`, `heroFrameIds` from `@/lib/room-frames`; `copy.eyebrow`.
-- Produces: `HeroLoop({ children })` client component that renders the hero grid: eyebrow, talk panel and `children` in the left column, the room in the right column. `TalkPanel({ state })` and `RoomScene({ frame })` are internal but exported for tests.
+- Consumes: `stateAt`, `reducedMotionState`, `HeroState`, `AgentColor` from `@/lib/hero-script`; `restFrame` from `@/lib/room-frames`; `copy.eyebrow`, `copy.roomAlt`.
+- Produces: `HeroLoop({ children })` client component that renders the hero grid: eyebrow, talk panel and `children` in the left column, the room in the right column. `TalkPanel({ state })` and `RoomLoop({ reduced })` are exported for tests.
 
 - [ ] **Step 1: Write the failing talk panel test**
 
@@ -845,12 +896,47 @@ describe("TalkPanel", () => {
 });
 ```
 
-- [ ] **Step 2: Run to see it fail**
+- [ ] **Step 2: Write the failing room loop test**
 
-Run: `npm test -- talk-panel`
-Expected: FAIL, cannot find module `@/components/talk-panel`.
+Create `src/components/room-loop.test.tsx`:
 
-- [ ] **Step 3: Create the talk panel**
+```tsx
+import { describe, expect, test, vi } from "vitest";
+import { render } from "@testing-library/react";
+
+vi.mock("@/lib/room-frames", () => ({
+  restFrame: { src: "/F1.webp", width: 1440, height: 1440 },
+}));
+
+import { RoomLoop } from "@/components/room-loop";
+
+describe("RoomLoop", () => {
+  test("plays the loop muted, looping and inline with both encodes", () => {
+    const { container } = render(<RoomLoop reduced={false} />);
+    const video = container.querySelector("video");
+    expect(video).not.toBeNull();
+    expect(video!.muted).toBe(true);
+    expect(video!.loop).toBe(true);
+    expect(video!.hasAttribute("playsinline")).toBe(true);
+    expect(video!.getAttribute("poster")).toBe("/F1.webp");
+    const sources = Array.from(container.querySelectorAll("source")).map((s) => s.getAttribute("src"));
+    expect(sources).toEqual(["/room/loop.webm", "/room/loop.mp4"]);
+  });
+
+  test("shows the rest frame instead under reduced motion", () => {
+    const { container } = render(<RoomLoop reduced={true} />);
+    expect(container.querySelector("video")).toBeNull();
+    expect(container.querySelector("img")).not.toBeNull();
+  });
+});
+```
+
+- [ ] **Step 3: Run both to see them fail**
+
+Run: `npm test -- talk-panel room-loop`
+Expected: FAIL, cannot find module `@/components/talk-panel` and `@/components/room-loop`.
+
+- [ ] **Step 4: Create the talk panel**
 
 Create `src/components/talk-panel.tsx`:
 
@@ -921,12 +1007,60 @@ export function TalkPanel({ state }: { state: HeroState }) {
 }
 ```
 
-- [ ] **Step 4: Run the test**
+- [ ] **Step 5: Create the room loop**
 
-Run: `npm test -- talk-panel`
-Expected: 3 tests pass.
+Create `src/components/room-loop.tsx`:
 
-- [ ] **Step 5: Create the reduced motion hook**
+```tsx
+"use client";
+
+import Image from "next/image";
+import { copy } from "@/lib/copy";
+import { restFrame } from "@/lib/room-frames";
+
+// The hero room. A silent five second loop of the agents typing, cut to the same
+// square as the stills. Under reduced motion it is the rest frame instead.
+export function RoomLoop({ reduced }: { reduced: boolean }) {
+  if (reduced) {
+    return (
+      <div className="room-fade aspect-square w-full">
+        <Image
+          src={restFrame}
+          alt={copy.roomAlt}
+          preload
+          sizes="(min-width: 1024px) 40vw, 100vw"
+          className="h-auto w-full"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="room-fade aspect-square w-full">
+      <video
+        className="h-full w-full object-contain"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster={restFrame.src}
+        aria-label={copy.roomAlt}
+      >
+        <source src="/room/loop.webm" type="video/webm" />
+        <source src="/room/loop.mp4" type="video/mp4" />
+      </video>
+    </div>
+  );
+}
+```
+
+- [ ] **Step 6: Run the tests**
+
+Run: `npm test -- talk-panel room-loop`
+Expected: 5 tests pass.
+
+- [ ] **Step 7: Create the reduced motion hook**
 
 Create `src/lib/use-prefers-reduced-motion.ts`:
 
@@ -954,45 +1088,7 @@ export function usePrefersReducedMotion(): boolean {
 }
 ```
 
-- [ ] **Step 6: Create the room scene**
-
-Create `src/components/room-scene.tsx`:
-
-```tsx
-"use client";
-
-import Image from "next/image";
-import type { FrameId } from "@/lib/hero-script";
-import { heroFrameIds, heroFrames } from "@/lib/room-frames";
-
-// Five frames stacked in one box; only the active one is visible. All five are the same
-// size (tested in room-frames.test.ts), so the room never moves between frames.
-export function RoomScene({ frame }: { frame: FrameId }) {
-  return (
-    <div
-      className="relative aspect-[1600/1358] w-full [mask-image:linear-gradient(to_right,transparent,black_12%)]"
-      data-frame={frame}
-    >
-      {heroFrameIds.map((id) => (
-        <Image
-          key={id}
-          src={heroFrames[id]}
-          alt=""
-          fill
-          sizes="(min-width: 1024px) 40vw, 100vw"
-          preload={id === "F1"}
-          loading={id === "F1" ? undefined : "eager"}
-          className={`object-contain transition-opacity duration-300 ${
-            id === frame ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      ))}
-    </div>
-  );
-}
-```
-
-- [ ] **Step 7: Create the hero loop**
+- [ ] **Step 8: Create the hero loop**
 
 Create `src/components/hero-loop.tsx`:
 
@@ -1003,7 +1099,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { copy } from "@/lib/copy";
 import { reducedMotionState, stateAt, type HeroState } from "@/lib/hero-script";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
-import { RoomScene } from "@/components/room-scene";
+import { RoomLoop } from "@/components/room-loop";
 import { TalkPanel } from "@/components/talk-panel";
 
 function same(a: HeroState, b: HeroState) {
@@ -1042,23 +1138,23 @@ export function HeroLoop({ children }: { children: ReactNode }) {
         {children}
       </div>
       <div className="order-1 lg:order-2 lg:col-span-2">
-        <RoomScene frame={state.frame} />
+        <RoomLoop reduced={reduced} />
       </div>
     </div>
   );
 }
 ```
 
-- [ ] **Step 8: Type-check, lint, test**
+- [ ] **Step 9: Type-check, lint, test**
 
 Run: `npx tsc --noEmit && npm run lint && npm test`
 Expected: clean. If lint objects to the `▍` character or to `JSON.stringify` comparison, keep them; they are deliberate.
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 10: Commit**
 
 ```bash
-git add src/lib/use-prefers-reduced-motion.ts src/components/room-scene.tsx src/components/talk-panel.tsx src/components/talk-panel.test.tsx src/components/hero-loop.tsx
-git commit -m "feat: hero loop with room scene and talk panel"
+git add src/lib/use-prefers-reduced-motion.ts src/components/room-loop.tsx src/components/room-loop.test.tsx src/components/talk-panel.tsx src/components/talk-panel.test.tsx src/components/hero-loop.tsx
+git commit -m "feat: hero loop with the room video and talk panel"
 ```
 
 ---
@@ -1070,6 +1166,7 @@ git commit -m "feat: hero loop with room scene and talk panel"
 - Create: `src/lib/waitlist.test.ts`
 - Create: `src/app/actions.ts`
 - Create: `.env.example`
+- Modify: `.gitignore`
 
 **Interfaces:**
 - Consumes: `copy.form` strings.
@@ -1438,12 +1535,12 @@ export default function Home() {
 
 Run: `npm run dev` and open http://localhost:3000. Check, in order:
 
-1. Eyebrow, then the talk line typing "hey Juno, run the tests" about one second in, the teal creature turning to face you when "Juno" lands, then turning back with two pips at four seconds.
-2. "hey Atlas, what's the status of my CI pipeline?" from six seconds, the red creature turning on "Atlas", the two red replies, then the red creature standing on the rug with the Atlas pip reading "done".
-3. The text fading just before the loop restarts at eighteen seconds. The room never jumps between frames.
-4. The headline does not move when replies appear (the panel reserves height).
-5. Enable reduced motion in the OS or DevTools rendering panel, reload: static room, first line complete, no cycling.
-6. Narrow the window below 1024 px: room on top, text below.
+1. The room video starts on its own, silent, and loops with no visible jump at the wrap. Its edges dissolve into the page with no box outline. Watch at least three loops.
+2. The talk line types "hey Juno, run the tests" about one second in, then two pips at four seconds.
+3. "hey Atlas, what's the status of my CI pipeline?" from six seconds, then the two red replies, and the Atlas pip reading "done" at the second reply.
+4. The text fades just before it restarts at eighteen seconds. The headline does not move when replies appear.
+5. Enable reduced motion in the OS or the DevTools rendering panel and reload: a still room, the first line complete, no cycling, no video element in the DOM.
+6. Narrow the window below 1024 px: room on top, text below. On a phone-sized viewport the video still autoplays (it is muted and inline).
 7. Submit the form with no `RESEND_API_KEY` set: the red failure line appears and nothing crashes.
 
 Stop the dev server.
@@ -1468,7 +1565,7 @@ git commit -m "feat: hero section with waitlist form"
 - Modify: `src/app/page.tsx`
 
 **Interfaces:**
-- Consumes: `copy.beats`, `sectionFrames`, `heroFrames`, `WaitlistForm`.
+- Consumes: `copy.beats`, `sectionFrames`, `restFrame`, `WaitlistForm`.
 - Produces: `BeatSection({ id, title, body, alt, image, flip })`, `FinalCta()`, `SiteFooter()`.
 
 - [ ] **Step 1: Create the beat section**
@@ -1505,12 +1602,12 @@ export function BeatSection({
         </h2>
         <p className="max-w-md text-lg text-zinc-300">{body}</p>
       </div>
-      <div className={flip ? "lg:order-1" : ""}>
+      <div className={`room-fade ${flip ? "lg:order-1" : ""}`}>
         <Image
           src={image}
           alt={alt}
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className="h-auto w-full [mask-image:linear-gradient(to_right,transparent,black_12%)]"
+          className="h-auto w-full"
         />
       </div>
     </section>
@@ -1526,7 +1623,7 @@ Create `src/components/final-cta.tsx`:
 import Image from "next/image";
 import { WaitlistForm } from "@/components/waitlist-form";
 import { copy } from "@/lib/copy";
-import { heroFrames } from "@/lib/room-frames";
+import { restFrame } from "@/lib/room-frames";
 
 export function FinalCta() {
   return (
@@ -1542,12 +1639,12 @@ export function FinalCta() {
           <WaitlistForm />
         </div>
       </div>
-      <div className="lg:col-span-2">
+      <div className="room-fade lg:col-span-2">
         <Image
-          src={heroFrames.F1}
+          src={restFrame}
           alt=""
           sizes="(min-width: 1024px) 40vw, 100vw"
-          className="h-auto w-full [mask-image:linear-gradient(to_right,transparent,black_12%)]"
+          className="h-auto w-full"
         />
       </div>
     </section>
@@ -1614,7 +1711,7 @@ export default function Home() {
 
 - [ ] **Step 5: Check in the browser**
 
-Run: `npm run dev`, open http://localhost:3000, scroll. Expected: four sections alternating text and image sides, the four titles in order, the far-away room in the last one, then the headline and form again, then the footer with one GitHub link. No horizontal scrollbar at 375 px wide. Stop the server.
+Run: `npm run dev`, open http://localhost:3000, scroll. Expected: four sections alternating text and image sides, the four titles in order, the room the same size and shape in every still as in the hero video, the far-away room in the fourth section, then the headline and form again, then the footer with one GitHub link. No horizontal scrollbar at 375 px wide. Stop the server.
 
 - [ ] **Step 6: Lint, test, commit**
 
@@ -1633,7 +1730,7 @@ git commit -m "feat: story sections, final call to action and footer"
 - Create: `src/app/opengraph-image.tsx`
 
 **Interfaces:**
-- Consumes: `src/assets/room/og-room.png` from Task 3, `copy`.
+- Consumes: `src/assets/room/og-room.png` from Task 3 (1200 by 1200), `copy`.
 - Produces: `/opengraph-image` at 1200 by 630, plus the `og:image` tags Next adds from the file convention.
 
 - [ ] **Step 1: Create the route**
@@ -1666,12 +1763,12 @@ export default async function Image() {
           color: "#ededed",
         }}
       >
-        {/* Room on the right. og-room.png is 1200 by 1019; at 700 tall it is 824 wide. */}
+        {/* Room on the right. og-room.png is a 1200 px square; at 700 tall it is 700 wide. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={room}
           alt=""
-          style={{ position: "absolute", right: -60, top: -35, height: 700 }}
+          style={{ position: "absolute", right: -40, top: -35, height: 700 }}
         />
         <div
           style={{
@@ -1721,7 +1818,7 @@ Expected: build succeeds with `/` and `/opengraph-image` listed as static. Fix a
 
 - [ ] **Step 2: Run the production server and repeat the hero checks**
 
-Run: `npm run start`, open http://localhost:3000, and repeat Task 8 Step 7 items 1 to 3 and Task 9 Step 5. Stop the server.
+Run: `npm run start`, open http://localhost:3000, and repeat Task 8 Step 7 items 1 to 4 and Task 9 Step 5. Confirm in the network panel that the browser fetched `loop.webm` (Chromium, Firefox) or `loop.mp4` (Safari), not both. Stop the server.
 
 - [ ] **Step 3: Update the README**
 
@@ -1730,7 +1827,12 @@ In `README.md`, replace the `## Assets` section with:
 ```markdown
 ## Assets
 
-The room frames on the page are cropped from the approved masters under `assets/higgsfield/keyframes/` by `npm run build:frames`, which writes `src/assets/room/*.webp` and `og-room.png`. Both the masters and the outputs are committed, so the script only needs to run again when a master changes. Prompts, job ids and the art direction are in `assets/higgsfield/keyframes/README.md` and `docs/superpowers/specs/2026-09-03-hero-art-direction-design.md`.
+The room on the page comes from generated masters under `assets/higgsfield/keyframes/`. Two scripts turn them into web files, and both the masters and the outputs are committed, so the scripts only need to run again when a master changes:
+
+- `npm run build:frames` crops the stills to a square around the room and writes `src/assets/room/*.webp` and `og-room.png`. Needs nothing beyond `npm install`.
+- `npm run build:video` encodes the hero loop to `public/room/loop.webm` and `loop.mp4` and writes `src/assets/room/loop.json`. Needs `ffmpeg` and `ffprobe` on PATH.
+
+Prompts, job ids and the art direction are in `assets/higgsfield/keyframes/README.md` and `docs/superpowers/specs/2026-09-03-hero-art-direction-design.md`.
 
 ## Waitlist
 
@@ -1753,4 +1855,5 @@ git commit -m "docs: assets pipeline and waitlist configuration"
 
 - Deploy to Vercel and set the two Resend variables there. The user has the `deploy-to-vercel` skill for this.
 - Create the Resend segment and paste its id into `RESEND_SEGMENT_ID`.
+- Try the hybrid: dissolve from the loop to the "Juno called" still on her name and back. Needs the F2 still recut to the square crop and a check that the video never drifts from it.
 - The two open items in the spec stay open: no platform line is shown, and there is no proof quote yet.

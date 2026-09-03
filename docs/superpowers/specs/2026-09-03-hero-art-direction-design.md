@@ -10,7 +10,8 @@ Inputs: `copy/company-brain.md` (mined from the app README), style and pose test
 - Art direction is an isometric voxel room diorama. Style anchor: `iso-test/iso-v1.png`. Rest state base: `iso-test/pose/rest.png`.
 - At rest the mascots face their screens with faces hidden. A mascot faces the viewer only when it is talking to you: a swivel in its chair when called, a hop off the chair when it reports back.
 - The whole page uses the same room from the same camera. Each section changes only what its beat needs.
-- Hero animation is stills cross-faded in the browser plus text overlays. No video and no audio. A video clip can replace the hero loop later if wanted.
+- The hero room is one looping five second clip of the three agents typing at their screens, muted, autoplaying, with the rest frame as poster and as the reduced-motion fallback. The story is carried by typed text over it. Decided later on 2026-09-03 after a test clip (Kling 3.0, same image as start and end frame) looped cleanly with a locked camera; it replaced an earlier plan of five stills cross-faded in the browser. The posed stills still carry the sections.
+- Every still used on the site is cut to a square centred at three quarters of the source frame width, which is where the room sits, so the room is the same size and shape in the video and in every section.
 - Primary action is a waitlist email signup. Copy is fixed below.
 
 ## Style key
@@ -41,24 +42,24 @@ No navigation. One footer link to the GitHub repo.
 
 ## Hero animation script
 
-Roughly eighteen seconds, then loops. The room frame changes only at the marked moments. All text is typed or faded in by the site; nothing is baked into the images.
+The room plays the ambient typing loop the whole time. The text on the left runs an eighteen second script, then fades and restarts. All text is typed or faded in by the site; nothing is baked into the video.
 
-| Time | Left side | Room frame |
-|---|---|---|
-| 0.0 | Pip: Atlas · working | F1 rest, Atlas working: all three at screens, red screen red-tinted |
-| 1.0 | Types: ● hey Juno, run the tests | |
-| on "Juno" | | F2 Juno called: teal swivelled to face viewer, eyes bright, teal desk glow; red at red screen; purple at amber screen |
-| 4.0 | Pips: Atlas · working, Juno · working | F3 both working: teal at teal-tinted screen, red at red-tinted screen, purple amber |
-| 6.0 | Types: ● hey Atlas, what's the status of my CI pipeline? | |
-| on "Atlas" | | F4 Atlas called: red swivelled to face viewer, eyes bright, red desk glow; teal at teal screen; purple amber |
-| 9.5 | Reply, red: Atlas: Let me check that for you. | F3 both working |
-| 13.5 | Reply, red: Atlas: The CI pipeline ran successfully. Pip Atlas becomes done. | F5 Atlas reports: red hopped off its chair, standing on the rug facing viewer, one arm raised, red floor glow; teal at teal screen; purple amber |
-| 17.0 | Hold | |
-| 18.0 | Fade text, reset pips | F1, loop |
+| Time | Left side |
+|---|---|
+| 0.0 | Pip: Atlas · working |
+| 1.0 | Types: ● hey Juno, run the tests |
+| 4.0 | Pips: Atlas · working, Juno · working |
+| 6.0 | Types: ● hey Atlas, what's the status of my CI pipeline? |
+| 9.5 | Reply, red: Atlas: Let me check that for you. |
+| 13.5 | Reply, red: Atlas: The CI pipeline ran successfully. Pip Atlas becomes done. |
+| 17.0 | Hold |
+| 18.0 | Fade text, reset pips, restart |
 
-What the loop demonstrates, in order: address by name, a second agent addressed while the first works, a follow-up question answered immediately mid-task, a completion report later, all without the user going anywhere.
+What the script demonstrates, in order: address by name, a second agent addressed while the first works, a follow-up question answered immediately mid-task, a completion report later, all without the user going anywhere.
 
-Reduced motion: show F1 with the first talk line already complete and no cycling. Frames are preloaded before the loop starts. Cross-fades are 300 ms.
+Reduced motion: the rest frame still instead of the video, the first talk line already complete, no cycling.
+
+Follow-up, not part of the build: dissolving from the loop to the "Juno called" still on her name and back. It only works if the clip never drifts from the still, so try it after the loop is live.
 
 ## Below the hero
 
@@ -76,23 +77,23 @@ Open Graph image: F1 cropped to 1.91:1 with the headline set over the black.
 
 | Id | State | Used |
 |---|---|---|
-| F1 | rest, Atlas working | hero start, final CTA, OG image |
-| F2 | Juno called | hero |
-| F3 | Juno and Atlas working | hero |
-| F4 | Atlas called | hero, section 3 |
-| F5 | Atlas reports | hero |
+| V1 | ambient loop, all three typing, Atlas's screen red | hero |
+| F1 | rest, Atlas working | video poster, reduced-motion fallback, final CTA, OG image |
+| F4 | Atlas called | section 3 |
 | S1 | three standing, facing viewer | section 1 |
 | S2 | all three working | section 2 |
 | S4 | room far away | section 4 |
+| F2, F3, F5 | Juno called, both working, Atlas reports | kept as masters, not on the page |
 
-Eight stills. Nano Banana 2 through the Higgsfield MCP server at 1k for approval, then the approved ones again at 2k for the site. Hero frames first; section frames after this note is reviewed.
+Stills: Nano Banana 2 through the Higgsfield MCP server at 1k for approval, then upscaled to 2k. Loop: Kling 3.0 pro, 5 s, 1:1, sound off, start and end image both the square crop of F1. All generated and approved on 2026-09-03; records in `assets/higgsfield/keyframes/README.md`.
 
 ## Production notes
 
 - Model: `nano_banana_2`, 21:9, references in order: rest frame job id, mascot sheet media id.
 - Pose language that worked: "chair has rotated a full half turn", "entire body, head, chest and both arms face the viewer squarely", "both arms hang down at its sides", "no part of it touches the desk or keyboard". For the hop: "hopped off its chair and stands on the rug", "one arm raised in a small wave". Add "rendered as a 3D voxel figure with visible cube depth" to keep standing poses from flattening.
 - Always end with "No text, labels or logos."
-- Site: Next.js 16, Tailwind 4, Geist Sans and Geist Mono are already wired in `src/app/layout.tsx`. The hero is one client component that owns the timeline; frames are static images swapped by opacity. Implementation plan to follow separately.
+- Video: `kling3_0`, roles `start_image` and `end_image`, aspect 1:1 (the model offers only 16:9, 9:16, 1:1), `sound: off`, mode pro. Passing the same square still as both frames is what makes the loop close. Verify a loop with ffmpeg frame extraction and a pixel diff of first against last frame before accepting it.
+- Site: Next.js 16, Tailwind 4, Geist Sans and Geist Mono are already wired in `src/app/layout.tsx`. The hero is one client component that owns the text timeline; the room is a `<video>` with the poster still, encoded to WebM and MP4 under `public/room/`. Implementation plan: `docs/superpowers/plans/2026-09-03-landing-page.md`.
 
 ## Open items
 
