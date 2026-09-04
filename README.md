@@ -38,4 +38,13 @@ The asset names come from `electron-builder.yml` in the app repo. Check them aga
 
 ## Assets
 
-Copy screenshots and video into `public/` rather than referencing the app repo at build time. The two repos have no build-time link.
+The room on the page comes from generated masters under `assets/higgsfield/keyframes/`. Two scripts turn them into web files, and both the masters and the outputs are committed, so the scripts only need to run again when a master changes:
+
+- `npm run build:frames` crops the stills to a square around the room and writes `src/assets/room/*.webp` and `og-room.png`. Needs nothing beyond `npm install`.
+- `npm run build:video` encodes the hero loop to `public/room/loop.webm` and `loop.mp4` and writes `src/assets/room/loop.json`. Needs `ffmpeg` and `ffprobe` on PATH.
+
+Prompts, job ids and the art direction are in `assets/higgsfield/keyframes/README.md` and `docs/superpowers/specs/2026-09-03-hero-art-direction-design.md`.
+
+## Waitlist
+
+Signups go to Resend as contacts. Set `RESEND_API_KEY`, and optionally `RESEND_SEGMENT_ID`, in `.env.local` for development and in the Vercel project settings for deployments. See `.env.example`.
