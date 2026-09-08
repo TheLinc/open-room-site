@@ -15,3 +15,10 @@ export const sectionFrames: Record<BeatId, StaticImageData> = {
   command: F4,
   local: S4,
 };
+
+// Where each named agent's head is in the square crop, as fractions of its
+// width and height. Status labels hang just above these points.
+export const agentSpots: Record<string, { x: number; y: number }> = {
+  Juno: { x: 0.305, y: 0.42 },
+  Atlas: { x: 0.515, y: 0.35 },
+};

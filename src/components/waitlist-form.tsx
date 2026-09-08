@@ -7,12 +7,30 @@ import type { WaitlistResult } from "@/lib/waitlist";
 
 const initial: WaitlistResult = { status: "idle" };
 
-export function WaitlistForm() {
+export type WaitlistLook = {
+  input: string;
+  button: string;
+  note: string;
+  error: string;
+  status: string;
+};
+
+// The site's dark look. A themed page passes its own classes instead.
+export const darkLook: WaitlistLook = {
+  input:
+    "h-11 flex-1 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-base text-foreground placeholder:text-zinc-500 focus:border-zinc-400 focus:outline-none",
+  button: "h-11 rounded-md bg-foreground px-4 text-base font-medium text-background disabled:opacity-60",
+  note: "text-sm text-zinc-400",
+  error: "text-sm text-agent-red",
+  status: "text-base text-zinc-200",
+};
+
+export function WaitlistForm({ look = darkLook }: { look?: WaitlistLook }) {
   const [state, formAction, pending] = useActionState(joinWaitlist, initial);
 
   if (state.status === "ok" || state.status === "already") {
     return (
-      <p role="status" className="text-base text-zinc-200">
+      <p role="status" className={look.status}>
         {state.status === "ok" ? copy.form.ok : copy.form.already}
       </p>
     );
@@ -31,17 +49,13 @@ export function WaitlistForm() {
           required
           autoComplete="email"
           placeholder={copy.cta.placeholder}
-          className="h-11 flex-1 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-base text-foreground placeholder:text-zinc-500 focus:border-zinc-400 focus:outline-none"
+          className={look.input}
         />
-        <button
-          type="submit"
-          disabled={pending}
-          className="h-11 rounded-md bg-foreground px-4 text-base font-medium text-background disabled:opacity-60"
-        >
+        <button type="submit" disabled={pending} className={look.button}>
           {copy.cta.button}
         </button>
       </div>
-      <p aria-live="polite" className={`text-sm ${state.status === "error" ? "text-agent-red" : "text-zinc-400"}`}>
+      <p aria-live="polite" className={state.status === "error" ? look.error : look.note}>
         {state.status === "error" ? state.message : copy.cta.under}
       </p>
     </form>

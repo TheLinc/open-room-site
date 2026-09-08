@@ -11,6 +11,11 @@ export const copy = {
   narration:
     "Example: say hey Juno, run the tests. Juno gets to work. Ask Atlas a question while he works and he answers straight away, then reports back when the job is done.",
   roomAlt: "A small dark room where three voxel agents, teal, red and purple, type at their own desks lit by their screens.",
+  crew: {
+    alt: "Five pixel agents, Clawd, Bit, Terminal, Block and Loop, seen from behind at a row of desks, each typing at its own screen.",
+    narration:
+      "Example: say hey Bit, run the tests. Bit gets to work. Ask Block a question while it works and it answers straight away, then reports back when the job is done.",
+  },
   cta: {
     label: "Email address",
     placeholder: "you@example.com",

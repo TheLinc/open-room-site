@@ -133,3 +133,20 @@ Locked-off camera, no camera movement at all. Idle looping animation: the three 
 ```
 
 Measured at 540 px (mean absolute pixel difference, 0 to 255): first frame vs source still 2.05, first vs last frame 0.46, camera drift in a static wall region at most 0.48, and the only pixels that change more than 20 levels are the three keyboard areas. Contact sheet, motion map and desk-band strip are alongside the clip.
+
+## Desk row, `row/`
+
+New hero direction, 2026-09-07: the five pixel-art mascots (Lincoln's reference, `row/crew-reference.jpg`, media id `eaeda595-6d84-4813-a388-fef42a6f3214`) seen from behind at a row of desks, monitors facing the viewer, on the Reading lamp cream. Nano Banana 2, 21:9, 1k, 1.5 credits each.
+
+| File | Job id | Result |
+|---|---|---|
+| `row/row-a.png` | `f0b4dbf0-95b9-4d5a-9756-7e1ad7aaee87` | monitors overlap the heads, screens tinted per agent, tighter chairs |
+| `row/row-b.png` | `1ab1db48-4f5e-4559-99b1-ca0703b0f5cc` | monitors sit above the heads, more screen visible, evenly spaced |
+
+Prompt:
+
+```
+Use the five pixel-art mascot characters from the reference image, same order left to right, same colours and same chunky 8-bit pixel style: salmon-orange crab with side claws, teal robot with two antennae, dark green trapezoid bucket, red L-shaped block, purple C shape. Draw them seen from BEHIND, backs to the viewer, no faces visible, each one sitting on a small pixel chair at its own small pixel desk, arms reaching forward to type on a keyboard. In front of each character, past its head, stands a small monitor whose screen faces the viewer and glows a pale tint of that character's colour. Five identical desks in one straight horizontal row, evenly spaced, camera straight on from behind at seat height, orthographic, no perspective. Flat 2D pixel art, crisp large pixels, no outlines, no gradients, no shading, no shadows, no floor line, no text, no labels. Solid plain cream background colour #FAF6EA everywhere. Wide composition with the row centred and generous empty cream space above.
+```
+
+Both came back with soft pixel edges and a background around #F4EEDC rather than the requested cream, which is the usual generative drift. If this direction is chosen, the row should be redrawn as real sprites (or these traced) so the pixels are crisp and the background is transparent.

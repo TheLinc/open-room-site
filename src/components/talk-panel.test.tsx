@@ -4,13 +4,11 @@ import { TalkPanel } from "@/components/talk-panel";
 import { stateAt } from "@/lib/hero-script";
 
 describe("TalkPanel", () => {
-  test("shows the typed line, replies and pips at the report beat", () => {
+  test("shows only the typed line at the report beat", () => {
     render(<TalkPanel state={stateAt(13500)} />);
     expect(screen.getByText("hey Atlas, what's the status of my CI pipeline?")).toBeDefined();
-    expect(screen.getByText("Let me check that for you.")).toBeDefined();
-    expect(screen.getByText("The CI pipeline ran successfully.")).toBeDefined();
-    expect(screen.getByText("Atlas · done")).toBeDefined();
-    expect(screen.getByText("Juno · working")).toBeDefined();
+    expect(screen.queryByText("The CI pipeline ran successfully.")).toBeNull();
+    expect(screen.queryByText("Atlas · done")).toBeNull();
   });
 
   test("shows a caret only while typing", () => {

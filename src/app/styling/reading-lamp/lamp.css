@@ -1,0 +1,1744 @@
+/* Reading lamp: the landing page set on warm paper. Tokens come from variant
+   01 in src/lib/style-variants.ts. Scoped under .lamp so the dark site is
+   untouched until this is promoted. */
+
+.lamp {
+  --lamp-bg: #faf6ea;
+  --lamp-surface: #f1ebd9;
+  --lamp-field: #fffdf6;
+  --lamp-border: #dad2b9;
+  --lamp-ink: #1c1913;
+  --lamp-muted: #655e4d;
+  --lamp-amber: #f3b34a;
+  --lamp-moss: #1f5a48;
+  --lamp-coral: #f0664a;
+  --lamp-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --lamp-sans: var(--font-instrument-sans), system-ui, sans-serif;
+  --lamp-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  overflow-x: clip;
+  color: var(--lamp-ink);
+  color-scheme: light;
+  font-family: var(--lamp-sans);
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--lamp-bg);
+  /* A lamp somewhere off the top, and a little paper grain. */
+  background-image:
+    radial-gradient(60% 40% at 50% 0%, rgb(243 179 74 / 0.16), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.1 0 0 0 0 0.07 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-attachment: fixed, scroll;
+}
+
+.lamp-wrap {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header and footer. */
+
+.lamp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+}
+
+.lamp-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--lamp-ink);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+
+.lamp-logo {
+  height: 28px;
+  width: auto;
+  filter: brightness(0.11);
+}
+
+.lamp-nav {
+  display: flex;
+  gap: 24px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.lamp-nav a {
+  color: var(--lamp-muted);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+
+.lamp-nav a:hover {
+  color: var(--lamp-ink);
+  border-bottom-color: var(--lamp-ink);
+}
+
+.lamp-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 0;
+  font-size: 14px;
+  color: var(--lamp-muted);
+  border-top: 1px solid var(--lamp-border);
+}
+
+.lamp-footer a {
+  color: var(--lamp-muted);
+  text-underline-offset: 4px;
+}
+
+.lamp-footer a:hover {
+  color: var(--lamp-moss);
+}
+
+/* Hero: words centred on top, the crew at their desks across the full width
+   underneath, the way a diagram reads. */
+
+.lamp-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 0 88px;
+}
+
+.lamp-copy {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 760px;
+}
+
+.lamp-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lamp-muted);
+  margin: 0;
+}
+
+.lamp-h1 {
+  font-family: var(--lamp-serif);
+  font-weight: 400;
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 0.98;
+  letter-spacing: -0.028em;
+  margin: 0;
+  text-wrap: balance;
+  max-width: 14ch;
+}
+
+.lamp-h1 em {
+  font-style: italic;
+}
+
+.lamp-lead {
+  font-size: 19px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--lamp-muted);
+  max-width: 40ch;
+  margin: 0;
+}
+
+.lamp-form {
+  width: 100%;
+  max-width: 520px;
+  margin-top: 4px;
+  text-align: left;
+}
+
+.lamp-trust {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lamp-muted);
+  margin: 0;
+  max-width: 44ch;
+}
+
+.lamp-stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1080px;
+}
+
+/* The voice pill: seven level bars in an ink pill, centred on the line's
+   x-height so it sits level with the words beside it. Bars murmur at rest and
+   rise while something is being said; --amp is a registered property so the
+   change eases instead of jumping. */
+
+@property --amp {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.9;
+}
+
+.lamp-voice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.055em;
+  height: 0.72em;
+  padding: 0 0.2em;
+  border-radius: 999px;
+  background: var(--lamp-ink);
+  vertical-align: middle;
+  position: relative;
+  top: -0.03em;
+  margin-right: 0.04em;
+  --amp: 0.9;
+  transition: --amp 500ms ease;
+}
+
+.lamp-voice.is-speaking {
+  --amp: 1.75;
+}
+
+.lamp-voice i {
+  display: block;
+  width: 0.06em;
+  height: 0.3em;
+  border-radius: 0.03em;
+  background: var(--lamp-amber);
+  transform-origin: center;
+  animation: lamp-voice-bar 720ms ease-in-out infinite alternate;
+  animation-delay: calc(var(--n) * -110ms);
+  animation-duration: calc(620ms + var(--n) * 47ms);
+}
+
+@keyframes lamp-voice-bar {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(var(--amp));
+  }
+}
+
+/* Controls. The one hard shadow on the page is under the primary button, and
+   it is the lamp's colour. */
+
+.lamp-input {
+  width: 100%;
+  height: 48px;
+  min-width: 0;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--lamp-border);
+  background: var(--lamp-field);
+  color: var(--lamp-ink);
+  font-family: var(--lamp-sans);
+  font-size: 16px;
+}
+
+@media (min-width: 640px) {
+  .lamp-input {
+    flex: 1;
+    width: auto;
+  }
+}
+
+.lamp-input::placeholder {
+  color: color-mix(in srgb, var(--lamp-muted) 70%, transparent);
+}
+
+.lamp-input:focus {
+  outline: none;
+  border-color: var(--lamp-moss);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lamp-moss) 22%, transparent);
+}
+
+.lamp-btn {
+  appearance: none;
+  height: 48px;
+  padding: 0 20px;
+  border-radius: 10px;
+  border: 1px solid var(--lamp-ink);
+  background: var(--lamp-ink);
+  color: var(--lamp-bg);
+  font-family: var(--lamp-sans);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--lamp-amber);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    opacity 120ms ease;
+}
+
+.lamp-btn:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--lamp-amber);
+}
+
+.lamp-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--lamp-amber);
+}
+
+.lamp-btn:focus-visible {
+  outline: 2px solid var(--lamp-moss);
+  outline-offset: 3px;
+}
+
+.lamp-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.lamp-note {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lamp-muted);
+  margin: 0;
+}
+
+.lamp-note.is-error {
+  color: var(--lamp-coral);
+}
+
+.lamp-status {
+  font-family: var(--lamp-serif);
+  font-size: 24px;
+  font-style: italic;
+  margin: 0;
+  text-align: center;
+}
+
+/* Word chips. Each word is an upright chip riding an offset-path from the
+   pill to a line above the named monitor; the line drops into the screen. */
+
+.lamp-flow {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.lamp-chip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  offset-rotate: 0deg;
+  offset-anchor: center;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--lamp-bg) 88%, transparent);
+  font-family: var(--lamp-serif);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.1;
+  color: var(--lamp-ink);
+  white-space: nowrap;
+  opacity: 0;
+  animation: lamp-chip-fly 1100ms cubic-bezier(0.35, 0.6, 0.3, 1) both;
+}
+
+@keyframes lamp-chip-fly {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  10%,
+  86% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.lamp-said {
+  position: absolute;
+  margin: 0;
+  transform: translate(-50%, -100%);
+  font-family: var(--lamp-serif);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--lamp-ink);
+  white-space: nowrap;
+}
+
+.lamp-said span {
+  opacity: 0;
+  animation: lamp-word-in 220ms ease-out both;
+}
+
+@keyframes lamp-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lamp-said.is-absorbing {
+  animation: lamp-said-drop 480ms cubic-bezier(0.5, 0, 0.8, 0.4) both;
+}
+
+@keyframes lamp-said-drop {
+  to {
+    transform: translate(-50%, calc(-100% + var(--drop))) scale(0.15);
+    opacity: 0;
+  }
+}
+
+/* The stream. A lane between the copy and the desks with a steadily moving
+   dotted baseline, and the lines riding it. */
+
+.lamp-lane {
+  position: relative;
+  width: 100%;
+  height: 44px;
+  margin: 4px 0 -8px;
+  overflow: hidden;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--lamp-amber) 70%, transparent) 1.2px, transparent 1.6px);
+  background-size: 22px 8px;
+  background-position: 0 50%;
+  background-repeat: repeat-x;
+  animation: lamp-lane-flow 110ms linear infinite;
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
+@keyframes lamp-lane-flow {
+  to {
+    background-position: 22px 50%;
+  }
+}
+
+.lamp-stream-line {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--lamp-bg);
+  font-family: var(--lamp-serif);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--lamp-ink);
+  white-space: nowrap;
+}
+
+.lamp-stream-line.is-dropping {
+  animation: lamp-stream-drop 500ms cubic-bezier(0.5, 0, 0.8, 0.4) both;
+}
+
+@keyframes lamp-stream-drop {
+  to {
+    transform: translate(-50%, calc(-50% + var(--drop))) scale(0.15);
+    opacity: 0;
+  }
+}
+
+.lamp-hero.is-stream .lamp-lane,
+.lamp-hero.is-terminal .lamp-lane {
+  z-index: 2;
+}
+
+.lamp-hero.is-stream .crew {
+  padding-top: 64px;
+}
+
+.lamp-stream-line.is-fading {
+  animation: lamp-stream-fade 420ms ease-out both;
+}
+
+@keyframes lamp-stream-fade {
+  to {
+    transform: translate(-50%, calc(-50% + 14px));
+    opacity: 0;
+  }
+}
+
+/* Terminal cards. A small terminal above the named desk where the line
+   types in and the reply prints, the way dictation lands in Claude Code. */
+
+.lamp-hero.is-terminal .crew {
+  padding-top: 128px;
+}
+
+.lamp-terminals {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.lamp-term {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  width: 250px;
+  border-radius: 10px;
+  background: var(--lamp-ink);
+  color: var(--lamp-bg);
+  border: 1px solid color-mix(in srgb, var(--agent) 60%, var(--lamp-ink));
+  box-shadow:
+    0 14px 30px -14px rgb(28 25 19 / 0.6),
+    0 0 0 3px color-mix(in srgb, var(--agent) 18%, transparent);
+  font-family: var(--lamp-mono);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: left;
+  animation: lamp-term-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.lamp-term::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  background: var(--lamp-ink);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes lamp-term-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% + 8px)) scale(0.96);
+  }
+}
+
+.lamp-term-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.1);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--lamp-bg) 70%, transparent);
+}
+
+.lamp-term-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--agent);
+}
+
+.lamp-term-app {
+  margin-left: auto;
+  opacity: 0.6;
+}
+
+.lamp-term-line {
+  margin: 0;
+  padding: 6px 10px 0;
+  white-space: normal;
+}
+
+.lamp-term-line:last-child {
+  padding-bottom: 8px;
+}
+
+.lamp-term-prompt {
+  color: var(--agent);
+}
+
+.lamp-term-line.is-muted {
+  color: color-mix(in srgb, var(--lamp-bg) 60%, transparent);
+}
+
+.lamp-term-line.is-reply {
+  color: color-mix(in srgb, var(--agent) 60%, var(--lamp-bg));
+  animation: lamp-word-in 220ms ease-out both;
+}
+
+.lamp-term-caret {
+  display: inline-block;
+  width: 7px;
+  height: 12px;
+  margin-left: 2px;
+  vertical-align: -2px;
+  background: var(--lamp-bg);
+  animation: crew-blink 900ms steps(1) infinite;
+}
+
+.lamp-term-spin {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 4px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--lamp-bg) 40%, transparent);
+  border-top-color: var(--agent);
+  animation: lamp-spin 800ms linear infinite;
+}
+
+@keyframes lamp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Listening: the named agent stops typing and glances round. */
+
+.crew-agent.is-listening .crew-hand {
+  animation-play-state: paused;
+}
+
+.crew-agent.is-listening > rect:not(.crew-screen),
+.crew-agent.is-listening .crew-hand,
+.crew-agent.is-listening .crew-eyes {
+  transform: translateX(1px);
+}
+
+.crew-name.is-idle .crew-status,
+.crew-name .crew-status {
+  color: var(--agent);
+}
+
+/* Crew row. The SVG is the sprites and the spoken line; names, status pills
+   and replies are HTML positioned over it by percentage of the viewBox. */
+
+.crew {
+  position: relative;
+  width: 100%;
+  /* Room above the monitors for a reply bubble. */
+  padding-top: 72px;
+}
+
+/* Pills and bubbles are placed by percentage of the SVG box, so the overlay
+   must cover exactly the SVG and not the padding above it. */
+.crew-stage {
+  position: relative;
+}
+
+.crew-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Output on a busy screen types itself out, clears, and types again. A done
+   agent keeps its last output on screen. */
+
+.crew-output rect {
+  opacity: 0;
+  animation: crew-output 4200ms steps(1) infinite;
+  animation-delay: calc(var(--i, 0) * 420ms);
+}
+
+.crew-agent.is-done .crew-output rect {
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes crew-output {
+  0% {
+    opacity: 0;
+  }
+  10%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.crew-cursor {
+  animation: crew-blink 900ms steps(1) infinite;
+}
+
+@keyframes crew-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Typing: each forearm lifts one cell and drops, the two out of step, every
+   agent on its own offset. A done agent rests its hands. */
+
+.crew-hand {
+  animation: crew-type 460ms steps(1) infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.crew-hand-r {
+  animation-delay: calc(var(--delay, 0ms) + 230ms);
+}
+
+.crew-agent.is-done .crew-hand {
+  animation-play-state: paused;
+}
+
+@keyframes crew-type {
+  0%,
+  49% {
+    transform: translateY(0);
+  }
+  50%,
+  100% {
+    transform: translateY(-1px);
+  }
+}
+
+.crew-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-family: var(--lamp-sans);
+  transition: opacity 500ms ease;
+}
+
+.crew.is-fading .crew-overlay {
+  opacity: 0;
+}
+
+.crew-name {
+  position: absolute;
+  transform: translate(-50%, 0);
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--lamp-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lamp-muted);
+  white-space: nowrap;
+}
+
+.crew-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--agent);
+}
+
+.crew-status::before {
+  content: "\00b7";
+  margin: 0 5px;
+  color: var(--lamp-muted);
+}
+
+.crew-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--agent);
+}
+
+.crew-name.is-working .crew-status i {
+  animation: crew-blink 1.2s ease-in-out infinite;
+}
+
+.crew-bubble {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 12px));
+  max-width: 220px;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--agent-screen);
+  border: 1.5px solid var(--agent);
+  color: var(--lamp-ink);
+  font-size: 13px;
+  line-height: 1.35;
+  text-align: center;
+  animation: crew-pop 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.crew-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  background: var(--agent-screen);
+  border-right: 1.5px solid var(--agent);
+  border-bottom: 1.5px solid var(--agent);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes crew-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 4px)) scale(0.92);
+  }
+}
+
+/* The app window. The product, drawn: dark ink chrome on the paper page,
+   agents down the left, the conversation in the middle, the mic at the foot. */
+
+.lamp-stage-app {
+  max-width: 980px;
+}
+
+/* With the product in the hero the words step back a size, like Cursor. */
+.lamp-hero.is-app .lamp-copy {
+  gap: 14px;
+}
+
+.lamp-hero.is-app .lamp-h1 {
+  font-size: clamp(40px, 4.4vw, 58px);
+}
+
+.lamp-hero.is-app .lamp-lead {
+  font-size: 18px;
+}
+
+.app {
+  --app-ink: #1c1913;
+  --app-panel: #241f18;
+  --app-line: rgb(255 255 255 / 0.08);
+  --app-text: #f3eee0;
+  --app-muted: #a8a08c;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--app-ink);
+  color: var(--app-text);
+  border: 1px solid #2d2720;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.06) inset,
+    0 40px 80px -40px rgb(243 179 74 / 0.4),
+    0 30px 60px -36px rgb(28 25 19 / 0.6);
+  font-family: var(--lamp-sans);
+  font-size: 14px;
+  text-align: left;
+  transition: opacity 500ms ease;
+}
+
+.app.is-fading .app-transcript,
+.app.is-fading .app-micbar {
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.app-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--app-line);
+  background: var(--app-panel);
+}
+
+.app-dots {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.app-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4a4238;
+}
+
+.app-title {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  color: var(--app-muted);
+  letter-spacing: 0.02em;
+}
+
+.app-mic-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--lamp-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--app-muted);
+}
+
+.app-mic-state i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4a4238;
+  transition: background-color 300ms ease;
+}
+
+.app-mic-state.is-on {
+  color: var(--lamp-amber);
+}
+
+.app-mic-state.is-on i {
+  background: var(--lamp-amber);
+  box-shadow: 0 0 8px var(--lamp-amber);
+  animation: crew-blink 1.2s ease-in-out infinite;
+}
+
+.app-body {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  min-height: 340px;
+}
+
+.app-rail {
+  border-right: 1px solid var(--app-line);
+  background: var(--app-panel);
+  padding: 10px 8px;
+}
+
+.app-rail-head {
+  padding: 6px 10px 10px;
+  font-family: var(--lamp-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--app-muted);
+}
+
+.app-agent {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  transition: background-color 250ms ease;
+}
+
+.app-agent.is-listening,
+.app-agent.is-working {
+  background: color-mix(in srgb, var(--agent) 14%, transparent);
+}
+
+.app-agent-face {
+  display: block;
+}
+
+.app-agent-text {
+  display: grid;
+  line-height: 1.2;
+}
+
+.app-agent-text b {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.app-agent-text small {
+  font-family: var(--lamp-mono);
+  font-size: 10px;
+  color: var(--app-muted);
+}
+
+.app-agent-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--lamp-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--agent);
+}
+
+.app-agent-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4a4238;
+}
+
+.app-agent.is-listening .app-agent-status i,
+.app-agent.is-working .app-agent-status i,
+.app-agent.is-done .app-agent-status i {
+  background: var(--agent);
+}
+
+.app-agent.is-listening .app-agent-status i,
+.app-agent.is-working .app-agent-status i {
+  animation: crew-blink 1.2s ease-in-out infinite;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-transcript {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 18px 20px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: opacity 500ms ease;
+}
+
+.app-msg {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  row-gap: 4px;
+  max-width: 78%;
+  animation: lamp-word-in 260ms ease-out both;
+}
+
+.app-msg.is-you {
+  align-self: flex-end;
+  grid-template-columns: minmax(0, 1fr);
+  text-align: right;
+}
+
+.app-msg-who {
+  font-family: var(--lamp-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--app-muted);
+  align-self: end;
+}
+
+.app-msg.is-agent .app-msg-who {
+  color: var(--agent);
+}
+
+.app-msg-face {
+  grid-row: 1 / 3;
+  align-self: start;
+  margin-top: 2px;
+}
+
+.app-msg-text {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.app-msg.is-you .app-msg-text {
+  background: var(--lamp-amber);
+  color: var(--app-ink);
+  border-bottom-right-radius: 4px;
+  justify-self: end;
+  font-family: var(--lamp-serif);
+  font-style: italic;
+  font-size: 16px;
+}
+
+.app-msg.is-agent .app-msg-text {
+  background: color-mix(in srgb, var(--agent) 18%, var(--app-panel));
+  border: 1px solid color-mix(in srgb, var(--agent) 40%, transparent);
+  border-bottom-left-radius: 4px;
+}
+
+.app-msg-voice {
+  grid-column: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+  font-family: var(--lamp-mono);
+  font-size: 10px;
+  color: var(--app-muted);
+}
+
+.app-msg-voice i {
+  width: 2px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--agent);
+  opacity: 0.5;
+}
+
+.app-msg-voice.is-playing i {
+  opacity: 1;
+  animation: app-voice 520ms ease-in-out infinite alternate;
+  animation-delay: calc(var(--n, 0) * 80ms);
+}
+
+.app-msg-voice i:nth-child(2) {
+  --n: 1;
+}
+.app-msg-voice i:nth-child(3) {
+  --n: 2;
+}
+.app-msg-voice i:nth-child(4) {
+  --n: 3;
+}
+.app-msg-voice i:nth-child(5) {
+  --n: 4;
+}
+
+.app-msg-voice em {
+  font-style: normal;
+  margin-left: 6px;
+}
+
+@keyframes app-voice {
+  from {
+    transform: scaleY(0.6);
+  }
+  to {
+    transform: scaleY(2.4);
+  }
+}
+
+.app-micbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 14px 14px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--app-line);
+  background: var(--app-panel);
+  transition: border-color 300ms ease;
+}
+
+.app-micbar.is-on {
+  border-color: color-mix(in srgb, var(--lamp-amber) 60%, transparent);
+}
+
+.app-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 18px;
+  --amp: 0.5;
+}
+
+.app-micbar.is-on .app-wave {
+  --amp: 2.2;
+}
+
+.app-wave i {
+  width: 3px;
+  height: 6px;
+  border-radius: 1.5px;
+  background: var(--lamp-amber);
+  animation: lamp-voice-bar 700ms ease-in-out infinite alternate;
+  animation-delay: calc(var(--n) * -100ms);
+  animation-duration: calc(600ms + var(--n) * 43ms);
+}
+
+.app-mic-text {
+  font-family: var(--lamp-serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--app-text);
+}
+
+.app-caret {
+  display: inline-block;
+  width: 2px;
+  height: 16px;
+  margin-left: 2px;
+  vertical-align: -3px;
+  background: var(--lamp-amber);
+  animation: crew-blink 900ms steps(1) infinite;
+}
+
+.app-mic-hint {
+  font-size: 13px;
+  color: var(--app-muted);
+}
+
+.app-mic-hint b {
+  color: var(--app-text);
+  font-weight: 500;
+}
+
+.app-mic-hint kbd {
+  font-family: var(--lamp-mono);
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--app-line);
+  background: var(--app-ink);
+  color: var(--app-text);
+}
+
+/* The switchboard still. Two columns: the copy with the pill on the left,
+   the agents on the right, and one SVG over the hero for the words. */
+
+.lamp-hero.is-switchboard,
+.lamp-hero.is-chat {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  align-items: center;
+  column-gap: 56px;
+  /* Headroom for the arc over the headline. */
+  padding-top: 132px;
+}
+
+.lamp-hero.is-switchboard .lamp-copy,
+.lamp-hero.is-chat .lamp-copy {
+  align-items: flex-start;
+  text-align: left;
+  max-width: 580px;
+  gap: 16px;
+  z-index: 1;
+}
+
+.lamp-hero.is-switchboard .lamp-h1,
+.lamp-hero.is-chat .lamp-h1 {
+  font-size: clamp(42px, 4.4vw, 58px);
+  max-width: 14ch;
+}
+
+.lamp-hero.is-switchboard .lamp-lead,
+.lamp-hero.is-chat .lamp-lead {
+  max-width: 36ch;
+}
+
+.lamp-hero.is-switchboard .lamp-form,
+.lamp-hero.is-chat .lamp-form {
+  text-align: left;
+}
+
+/* The chat needs no headroom: nothing flies over the headline. */
+.lamp-hero.is-chat {
+  padding-top: 48px;
+}
+
+/* The chat. What you said, then the agent it woke, lit in its colour. A
+   feed: three exchanges showing, older ones sliding away. */
+
+.chat {
+  justify-self: end;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.chat-exchange {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: chat-enter 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes chat-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.chat-exchange.is-leaving {
+  animation: chat-leave 520ms ease-in both;
+  pointer-events: none;
+}
+
+@keyframes chat-leave {
+  0% {
+    opacity: 1;
+    max-height: 240px;
+    transform: translateY(0);
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: -22px;
+    transform: translateY(-10px);
+  }
+}
+
+.chat-you {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.chat-who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--lamp-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lamp-muted);
+}
+
+.chat-route {
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--agent) 45%, transparent);
+  color: var(--agent);
+  letter-spacing: 0.04em;
+  animation: chat-enter 260ms ease-out both;
+}
+
+.chat-text {
+  font-family: var(--lamp-serif);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--lamp-ink);
+  min-height: 1.25em;
+}
+
+.chat-wake {
+  display: inline-block;
+  transition: color 220ms ease;
+}
+
+.chat-wake.is-called {
+  color: var(--agent);
+  animation: chat-pop 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes chat-pop {
+  40% {
+    transform: scale(1.06);
+  }
+}
+
+.chat-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.9em;
+  margin-left: 2px;
+  vertical-align: -0.1em;
+  background: var(--lamp-amber);
+  animation: crew-blink 900ms steps(1) infinite;
+}
+
+.chat-agent {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--agent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--agent) 35%, transparent);
+  transform-origin: top center;
+  animation: chat-unfold 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.chat-agent.is-quiet {
+  background: color-mix(in srgb, var(--agent) 6%, transparent);
+  border-color: color-mix(in srgb, var(--agent) 18%, transparent);
+}
+
+@keyframes chat-unfold {
+  from {
+    opacity: 0;
+    transform: scaleY(0.7) translateY(-6px);
+  }
+}
+
+.chat-face {
+  display: block;
+}
+
+.chat-agent-text {
+  display: grid;
+  line-height: 1.2;
+}
+
+.chat-agent-text b {
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--lamp-ink);
+}
+
+.chat-agent-text small {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--lamp-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--agent);
+}
+
+.chat-agent-text small i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--agent);
+}
+
+.chat-agent.is-listening small i,
+.chat-agent.is-working small i {
+  animation: crew-blink 1.2s ease-in-out infinite;
+}
+
+.chat-agent.is-asking small i {
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.chat-agent.is-done small::after {
+  content: "\2713";
+  margin-left: 2px;
+}
+
+.chat-replies {
+  grid-column: 2;
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.chat-replies li {
+  position: relative;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--lamp-field);
+  border: 1px solid var(--agent);
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--lamp-ink);
+  animation: chat-enter 260ms ease-out both;
+}
+
+.chat-replies li.is-ask {
+  border-style: dashed;
+}
+
+.chat-voice {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 10px;
+  margin-left: 8px;
+  vertical-align: -1px;
+}
+
+.chat-voice i {
+  width: 2px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--agent);
+  opacity: 0.45;
+}
+
+.chat-voice.is-playing i {
+  opacity: 1;
+  animation: app-voice 520ms ease-in-out infinite alternate;
+}
+
+.chat-voice i:nth-child(2) {
+  animation-delay: 80ms;
+}
+.chat-voice i:nth-child(3) {
+  animation-delay: 160ms;
+}
+.chat-voice i:nth-child(4) {
+  animation-delay: 240ms;
+}
+.chat-voice i:nth-child(5) {
+  animation-delay: 320ms;
+}
+
+.chat-replies li.chat-dots {
+  display: inline-flex;
+  gap: 4px;
+  padding: 6px 2px;
+  background: transparent;
+  border: 0;
+  animation: none;
+}
+
+.chat-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--agent);
+  animation: chat-dot 1100ms ease-in-out infinite;
+}
+
+.chat-dots i:nth-child(2) {
+  animation-delay: 180ms;
+}
+.chat-dots i:nth-child(3) {
+  animation-delay: 360ms;
+}
+
+@keyframes chat-dot {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+.lamp.is-night .chat-text,
+.lamp.is-night .chat-agent-text b,
+.lamp.is-night .chat-replies li {
+  color: var(--lamp-bg);
+}
+
+.lamp.is-night .chat-replies li {
+  background: #1e1a14;
+}
+
+@media (max-width: 900px) {
+  .lamp-hero.is-switchboard,
+  .lamp-hero.is-chat {
+    grid-template-columns: 1fr;
+    row-gap: 32px;
+  }
+
+  .sb-rows,
+  .chat {
+    justify-self: start;
+  }
+
+  .sb-overlay {
+    display: none;
+  }
+}
+
+/* Smaller screens: the row stays one row, just smaller. */
+
+@media (max-width: 1023px) {
+  .lamp-hero {
+    gap: 32px;
+    padding: 24px 0 72px;
+  }
+}
+
+@media (max-width: 640px) {
+  .lamp-nav {
+    gap: 16px;
+    font-size: 14px;
+  }
+
+  .crew {
+    padding-top: 56px;
+  }
+
+  .crew-bubble {
+    max-width: 150px;
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .crew-name {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  .crew-status {
+    display: none;
+  }
+
+  .lamp-chip,
+  .lamp-said,
+  .lamp-stream-line {
+    font-size: 15px;
+  }
+
+  .lamp-term {
+    width: 170px;
+    font-size: 10px;
+  }
+
+  .app-body {
+    grid-template-columns: 1fr;
+  }
+
+  .app-rail {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--app-line);
+    padding: 8px;
+  }
+
+  .app-rail-head {
+    display: none;
+  }
+
+  .app-agent {
+    grid-template-columns: 26px auto;
+    padding: 6px 8px;
+  }
+
+  .app-agent-text small,
+  .app-agent-status {
+    display: none;
+  }
+
+  .app-msg {
+    max-width: 92%;
+  }
+
+  .lamp-hero.is-terminal .crew {
+    padding-top: 96px;
+  }
+
+  .lamp-lane {
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp-btn,
+  .crew-agent .crew-screen {
+    transition: none;
+  }
+
+  .crew-hand,
+  .crew-cursor,
+  .crew-output rect,
+  .crew-status i,
+  .crew-bubble,
+  .lamp-voice i,
+  .lamp-lane,
+  .lamp-chip,
+  .lamp-term,
+  .lamp-term-caret,
+  .lamp-term-spin,
+  .lamp-term-line.is-reply,
+  .chat-exchange,
+  .chat-agent,
+  .chat-caret,
+  .chat-replies li,
+  .chat-agent small i,
+  .chat-wake,
+  .chat-route,
+  .chat-voice i,
+  .chat-dots i,
+  .app-wave i,
+  .app-msg,
+  .app-msg-voice i,
+  .app-caret,
+  .app-mic-state i,
+  .app-agent-status i {
+    animation: none;
+  }
+
+  .lamp-said span {
+    animation: none;
+    opacity: 1;
+  }
+
+  .crew-output rect {
+    opacity: 1;
+  }
+}
+
+/* Night. The page becomes the room's black and the words sit on a beige card.
+   The crew stays on the page; their desks are dark wood, so they read. */
+
+.lamp.is-night {
+  --lamp-night-text: #b8a585;
+  color: var(--lamp-bg);
+  /* Near-black, a touch warm. */
+  background-color: #0a0806;
+  background-image:
+    radial-gradient(60% 40% at 50% 0%, rgb(243 179 74 / 0.12), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.lamp.is-night .lamp-brand {
+  color: var(--lamp-bg);
+}
+
+.lamp.is-night .lamp-logo {
+  filter: none;
+}
+
+.lamp.is-night .lamp-nav a {
+  color: var(--lamp-night-text);
+}
+
+.lamp.is-night .lamp-nav a:hover {
+  color: var(--lamp-bg);
+  border-bottom-color: var(--lamp-bg);
+}
+
+.lamp.is-night .lamp-copy {
+  background: var(--lamp-surface);
+  color: var(--lamp-ink);
+  border-radius: 24px;
+  padding: 48px;
+  border: 1px solid color-mix(in srgb, var(--lamp-surface) 70%, var(--lamp-amber));
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.5) inset,
+    0 40px 80px -40px rgb(243 179 74 / 0.35),
+    0 24px 48px -32px rgb(0 0 0 / 0.8);
+}
+
+.lamp.is-night .lamp-chip,
+.lamp.is-night .lamp-said,
+.lamp.is-night .lamp-stream-line {
+  color: var(--lamp-bg);
+  background: transparent;
+}
+
+.lamp.is-night .crew-name {
+  color: var(--lamp-night-text);
+}
+
+.lamp.is-night .lamp-footer {
+  color: var(--lamp-night-text);
+  border-top-color: rgb(255 255 255 / 0.1);
+}
+
+.lamp.is-night .lamp-footer a {
+  color: var(--lamp-night-text);
+}
+
+.lamp.is-night .lamp-footer a:hover {
+  color: var(--lamp-bg);
+}
+
+@media (max-width: 1023px) {
+  .lamp.is-night .lamp-copy {
+    padding: 32px 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .lamp.is-night .lamp-copy {
+    padding: 28px 22px;
+    border-radius: 18px;
+  }
+}

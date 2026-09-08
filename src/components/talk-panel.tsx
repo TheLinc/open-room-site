@@ -2,23 +2,20 @@
 
 import type { AgentColor, HeroState } from "@/lib/hero-script";
 
-const textColor: Record<AgentColor, string> = {
-  teal: "text-agent-teal",
-  red: "text-agent-red",
-};
-
 const dotColor: Record<AgentColor, string> = {
   teal: "bg-agent-teal",
   red: "bg-agent-red",
 };
 
+// The line you are saying to the room, typed out under it. Replies come back as
+// speech bubbles in the room itself.
 export function TalkPanel({ state }: { state: HeroState }) {
   const typing = state.talk !== null && state.talk.typed.length < state.talk.full.length;
 
   return (
     <div
       aria-hidden="true"
-      className={`min-h-32 font-mono text-sm transition-opacity duration-500 md:text-base ${
+      className={`min-h-6 font-mono text-sm transition-opacity duration-500 ${
         state.fading ? "opacity-0" : "opacity-100"
       }`}
     >
@@ -35,30 +32,6 @@ export function TalkPanel({ state }: { state: HeroState }) {
           </>
         ) : null}
       </p>
-
-      <ul className="mt-2 space-y-1">
-        {state.replies.map((r) => (
-          <li key={r.text} className={textColor[r.color]}>
-            {r.name}: <span className="text-zinc-300">{r.text}</span>
-          </li>
-        ))}
-      </ul>
-
-      <ul className="mt-3 flex flex-wrap gap-2">
-        {state.pips.map((p) => (
-          <li
-            key={p.name}
-            className="flex items-center gap-1.5 rounded-full border border-zinc-800 px-2 py-0.5 text-xs text-zinc-400"
-          >
-            <span
-              className={`inline-block size-1.5 rounded-full ${dotColor[p.color]} ${
-                p.status === "working" ? "animate-pulse" : ""
-              }`}
-            />
-            {`${p.name} · ${p.status}`}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
