@@ -1,154 +1,267 @@
 @import "tailwindcss";
 
-:root {
-  --background: #010206;
-  --foreground: #ededed;
-}
+/* Open Room product page. Zinc neutrals on a light ground, Geist throughout,
+   Geist Mono for paths, keys and captions. Colour is the five agents. Pixel
+   art lives in the characters and the voice pill and nowhere else. */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-agent-teal: #06b6d4;
-  --color-agent-red: #f43f5e;
-  --color-agent-purple: #8b5cf6;
+  --color-ground: #fafafa;
+  --color-card: #ffffff;
+  --color-line: #e4e4e7;
+  --color-line-soft: #f1f1f4;
+  --color-ink: #09090b;
+  --color-ink-2: #3f3f46;
+  --color-muted: #71717a;
+  --color-night: #0a0a0b;
+  --color-night-card: #131316;
+  --color-night-line: #27272a;
+  --color-night-muted: #a1a1aa;
+  --color-clawd: #d87858;
+  --color-bit: #288888;
+  --color-terminal: #488848;
+  --color-block: #cc2828;
+  --color-loop: #682c78;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --radius-panel: 14px;
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Fades the outer 6% of a room still or video on every edge, so an encoded or
-   compressed black never shows as a box against the page background. The room
-   itself starts 7% in from each edge of the square crop. */
-.room-fade {
-  mask-image:
-    linear-gradient(to right, transparent, black 6%, black 94%, transparent),
-    linear-gradient(to bottom, transparent, black 6%, black 94%, transparent);
-  mask-composite: intersect;
-  -webkit-mask-composite: source-in;
+/* The parts the browser draws still carry the design. */
+::selection {
+  background: color-mix(in srgb, var(--color-bit) 22%, transparent);
+  color: var(--color-ink);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+:focus-visible {
+  outline: 2px solid var(--color-bit);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+
+a {
+  text-underline-offset: 0.2em;
+}
+
+kbd {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.8em;
+  padding: 1px 6px;
+  border: 1px solid var(--color-line);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--color-card);
+}
+
+/* Pixel art stays crisp at any scale. */
+.pixel {
+  image-rendering: pixelated;
+  shape-rendering: crispEdges;
+}
+
+/* Characters move in steps; the interface moves smoothly. Nothing below
+   this line is used on interface elements. */
+
+.crew-hand {
+  animation: crew-type 460ms steps(1) infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+.crew-hand-r {
+  animation-delay: calc(var(--delay, 0ms) + 230ms);
+}
+
+.crew-agent.is-done .crew-hand,
+.crew-agent.is-glancing .crew-hand {
+  animation-play-state: paused;
+}
+
+@keyframes crew-type {
+  0%,
+  49% {
+    transform: translateY(0);
+  }
+  50%,
+  100% {
+    transform: translateY(-1px);
   }
 }
 
-/* Ambient light spilling out of the room's open front. The diorama is cut away
-   toward the viewer, so the warm monitor light leaks from the lower half of the
-   square onto the page. Sits behind the media and breathes slowly, in step with
-   the lamps flickering in the loop. */
-.room-glow {
-  position: relative;
-  isolation: isolate;
+.crew-agent.is-glancing > rect:not(.crew-screen),
+.crew-agent.is-glancing .crew-hand,
+.crew-agent.is-glancing .crew-eyes {
+  transform: translateX(1px);
 }
 
-/* Screen blending drops the media's black to the page background, so the glow
-   behind reads through the video instead of stopping at its square. The blend
-   goes on the masked wrapper: the mask makes it a stacking context, and a child
-   inside would only blend against that, never the glow. The encode lifts black
-   a few levels; a little contrast on the media crushes it back to zero. */
-.room-glow .room-fade {
-  mix-blend-mode: screen;
+.crew-output rect {
+  opacity: 0;
+  animation: crew-output 4200ms steps(1) infinite;
+  animation-delay: calc(var(--i, 0) * 420ms);
 }
 
-.room-glow .room-fade > * {
-  filter: contrast(1.06);
+.crew-agent.is-done .crew-output rect {
+  animation: none;
+  opacity: 1;
 }
 
-.room-glow::before {
-  content: "";
-  position: absolute;
-  inset: -15% -30% -40%;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      ellipse 50% 40% at 50% 66%,
-      rgb(251 146 60 / 0.42),
-      rgb(244 63 94 / 0.14) 48%,
-      transparent 72%
-    );
-  filter: blur(24px);
-  animation: room-glow-breathe 7s ease-in-out infinite;
+@keyframes crew-output {
+  0% {
+    opacity: 0;
+  }
+  10%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
-@keyframes room-glow-breathe {
+.crew-cursor {
+  animation: blink 900ms steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* The voice pill's bars. --amp eases so speech never snaps on. */
+@property --amp {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.7;
+}
+
+.voice-pill {
+  --amp: 0.7;
+  --voice: var(--color-bit);
+  transition: --amp 500ms ease;
+}
+
+.voice-pill.is-speaking {
+  --amp: 1.9;
+}
+
+.voice-pill i {
+  animation: voice-bar 720ms ease-in-out infinite alternate;
+  animation-delay: calc(var(--n) * -110ms);
+  animation-duration: calc(620ms + var(--n) * 47ms);
+  transform-origin: center;
+}
+
+@keyframes voice-bar {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(var(--amp));
+  }
+}
+
+/* Reply voice meter and the thinking dots inside the app window. */
+.voice-meter.is-playing i {
+  animation: meter 520ms ease-in-out infinite alternate;
+  animation-delay: calc(var(--n, 0) * 80ms);
+}
+
+@keyframes meter {
+  from {
+    transform: scaleY(0.5);
+  }
+  to {
+    transform: scaleY(1.6);
+  }
+}
+
+.dots i {
+  animation: dot 1100ms ease-in-out infinite;
+  animation-delay: calc(var(--n, 0) * 180ms);
+}
+
+@keyframes dot {
   0%,
   100% {
-    opacity: 0.75;
-    transform: scale(1);
+    opacity: 0.25;
+    transform: translateY(0);
   }
-  50% {
+  40% {
     opacity: 1;
-    transform: scale(1.06);
+    transform: translateY(-2px);
   }
 }
 
-/* Labels over the room share one material: dark glass tinted by the agent's
-   colour, a hairline edge, a soft drop and a faint glow. --bubble is that
-   agent's colour. */
-.room-pill,
-.speech-bubble {
-  --tint: color-mix(in srgb, var(--bubble, #ffffff) 9%, rgb(12 12 18 / 0.78));
-  background: var(--tint);
-  border: 1px solid rgb(255 255 255 / 0.09);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.06),
-    0 10px 28px -10px rgb(0 0 0 / 0.75),
-    0 0 22px -4px color-mix(in srgb, var(--bubble, #ffffff) 22%, transparent);
-  backdrop-filter: blur(6px) saturate(1.2);
-}
-
-.room-pill {
-  border-radius: 9999px;
-}
-
-/* A speech bubble anchored to an agent in the room. Its left/top are the
-   agent's head; the box sits above the status label with a tail pointing down
-   at the agent, and grows in from the tail. */
-.speech-bubble {
-  position: absolute;
-  transform-origin: 14px calc(100% + 6px);
-  transform: translate(-14px, calc(-100% - 36px));
-  border-radius: 14px;
-  animation: bubble-in 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-.speech-bubble::before {
-  content: "";
-  position: absolute;
-  left: 9px;
-  bottom: -6px;
-  width: 12px;
-  height: 12px;
-  background: var(--tint);
-  border-right: 1px solid rgb(255 255 255 / 0.09);
-  border-bottom: 1px solid rgb(255 255 255 / 0.09);
-  border-radius: 0 0 3px 0;
-  transform: rotate(45deg);
-}
-
-@keyframes bubble-in {
+/* The pixel field arrives after the page is interactive, so it fades in. */
+@keyframes field-in {
   from {
     opacity: 0;
-    transform: translate(-14px, calc(-100% - 28px)) scale(0.9);
+  }
+}
+
+/* Interface motion: one entrance, exponential ease-out, from a visible default. */
+.rise {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise[data-inview="false"] {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  .rise {
+    transition:
+      opacity 640ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 640ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--rise-delay, 0ms);
+  }
+
+  .thread-in {
+    animation: thread-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes thread-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .speech-bubble {
+  .crew-hand,
+  .crew-cursor,
+  .crew-output rect,
+  .voice-pill i,
+  .voice-meter i,
+  .dots i {
     animation: none;
+  }
+
+  .crew-output rect {
+    opacity: 1;
+  }
+
+  .voice-pill {
+    transition: none;
   }
 }

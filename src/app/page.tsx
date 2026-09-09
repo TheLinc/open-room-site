@@ -1,31 +1,26 @@
-import { BeatSection } from "@/components/beat-section";
-import { FinalCta } from "@/components/final-cta";
+import { Faq } from "@/components/faq";
+import { Features } from "@/components/features";
 import { Hero } from "@/components/hero";
+import { HowItWorks } from "@/components/how-it-works";
+import { Footer, GetStarted, OpenSource, Safety } from "@/components/sections";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { copy } from "@/lib/copy";
-import { sectionFrames } from "@/lib/room-frames";
+import { getStars } from "@/lib/github";
 
-export default function Home() {
+export default async function Page() {
+  const stars = await getStars();
   return (
     <>
-      <SiteHeader />
-      <main className="flex flex-1 flex-col">
+      <SiteHeader stars={stars} />
+      <main className="flex-1">
         <Hero />
-        {copy.beats.map((beat, index) => (
-          <BeatSection
-            key={beat.id}
-            id={beat.id}
-            title={beat.title}
-            body={beat.body}
-            alt={beat.alt}
-            image={sectionFrames[beat.id]}
-            flip={index % 2 === 1}
-          />
-        ))}
-        <FinalCta />
-        <SiteFooter />
+        <HowItWorks />
+        <Features />
+        <OpenSource stars={stars} />
+        <Safety />
+        <GetStarted />
+        <Faq />
       </main>
+      <Footer />
     </>
   );
 }

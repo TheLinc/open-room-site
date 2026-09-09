@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-08T00:00:00Z",
+  "title": "Design System: Open Room",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "primary", "displayName": "Ink", "canonical": "#09090b", "tonalRamp": ["oklch(15% 0.005 286)", "oklch(25% 0.005 286)", "oklch(35% 0.005 286)", "oklch(45% 0.005 286)", "oklch(58% 0.005 286)", "oklch(72% 0.005 286)", "oklch(85% 0.005 286)", "oklch(95% 0.005 286)"] },
+      "clawd": { "role": "secondary", "displayName": "Clawd coral", "canonical": "#d87858", "tonalRamp": ["oklch(15% 0.06 40)", "oklch(27% 0.09 40)", "oklch(39% 0.12 40)", "oklch(51% 0.14 40)", "oklch(63% 0.14 40)", "oklch(75% 0.11 40)", "oklch(86% 0.07 40)", "oklch(95% 0.03 40)"] },
+      "bit": { "role": "secondary", "displayName": "Bit teal", "canonical": "#288888", "tonalRamp": ["oklch(15% 0.04 195)", "oklch(27% 0.06 195)", "oklch(39% 0.08 195)", "oklch(51% 0.09 195)", "oklch(63% 0.09 195)", "oklch(75% 0.08 195)", "oklch(86% 0.05 195)", "oklch(95% 0.02 195)"] },
+      "terminal": { "role": "secondary", "displayName": "Terminal green", "canonical": "#488848", "tonalRamp": ["oklch(15% 0.05 145)", "oklch(27% 0.08 145)", "oklch(39% 0.10 145)", "oklch(51% 0.12 145)", "oklch(63% 0.12 145)", "oklch(75% 0.10 145)", "oklch(86% 0.07 145)", "oklch(95% 0.03 145)"] },
+      "block": { "role": "secondary", "displayName": "Block red", "canonical": "#cc2828", "tonalRamp": ["oklch(15% 0.07 28)", "oklch(27% 0.12 28)", "oklch(39% 0.16 28)", "oklch(51% 0.20 28)", "oklch(63% 0.18 28)", "oklch(75% 0.13 28)", "oklch(86% 0.08 28)", "oklch(95% 0.03 28)"] },
+      "loop": { "role": "secondary", "displayName": "Loop plum", "canonical": "#682c78", "tonalRamp": ["oklch(15% 0.06 320)", "oklch(27% 0.10 320)", "oklch(39% 0.14 320)", "oklch(51% 0.15 320)", "oklch(63% 0.14 320)", "oklch(75% 0.11 320)", "oklch(86% 0.07 320)", "oklch(95% 0.03 320)"] },
+      "ground": { "role": "neutral", "displayName": "Ground", "canonical": "#fafafa", "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#e4e4e7", "#fafafa"] },
+      "card": { "role": "neutral", "displayName": "Card", "canonical": "#ffffff", "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#f1f1f4", "#ffffff"] },
+      "line": { "role": "neutral", "displayName": "Line", "canonical": "#e4e4e7", "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#d4d4d8", "#e4e4e7"] },
+      "line-soft": { "role": "neutral", "displayName": "Line soft", "canonical": "#f1f1f4", "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#e4e4e7", "#f1f1f4"] },
+      "ink-2": { "role": "neutral", "displayName": "Ink 2", "canonical": "#3f3f46", "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#52525b", "#71717a", "#a1a1aa", "#e4e4e7"] },
+      "muted": { "role": "neutral", "displayName": "Muted", "canonical": "#71717a", "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#d4d4d8", "#fafafa"] },
+      "night": { "role": "neutral", "displayName": "Night", "canonical": "#0a0a0b", "tonalRamp": ["#0a0a0b", "#131316", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#e4e4e7", "#fafafa"] },
+      "night-card": { "role": "neutral", "displayName": "Night card", "canonical": "#131316", "tonalRamp": ["#0a0a0b", "#131316", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#e4e4e7", "#fafafa"] },
+      "night-line": { "role": "neutral", "displayName": "Night line", "canonical": "#27272a", "tonalRamp": ["#0a0a0b", "#131316", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#e4e4e7", "#fafafa"] },
+      "night-muted": { "role": "neutral", "displayName": "Night muted", "canonical": "#a1a1aa", "tonalRamp": ["#0a0a0b", "#131316", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#e4e4e7", "#fafafa"] },
+      "night-key": { "role": "neutral", "displayName": "Night key", "canonical": "#7fd1d1", "tonalRamp": ["oklch(15% 0.04 195)", "oklch(27% 0.06 195)", "oklch(39% 0.08 195)", "oklch(51% 0.09 195)", "oklch(63% 0.09 195)", "oklch(75% 0.08 195)", "oklch(86% 0.05 195)", "oklch(95% 0.02 195)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The hero headline only; the verb is replaced by the voice pill." },
+      "headline": { "displayName": "Headline", "purpose": "Every section h2, left-aligned, at most 40 to 44ch." },
+      "title": { "displayName": "Title", "purpose": "Step and feature titles (19 to 22px), FAQ questions (17px)." },
+      "lead": { "displayName": "Lead", "purpose": "The muted paragraph under a heading; 19px in the hero." },
+      "body": { "displayName": "Body", "purpose": "Explanatory copy in ink-2; 17px in the open-source and safety sections." },
+      "small": { "displayName": "Small", "purpose": "Details, sources, footer, panel metadata, chip text." },
+      "label": { "displayName": "Mono label", "purpose": "Paths, keys, status words, bubble names, captions, the hero under-line. Never headings or body." }
+    },
+    "shadows": [
+      { "name": "panel-float", "value": "0 1px 2px rgb(0 0 0 / 0.04), 0 12px 30px -16px rgb(0 0 0 / 0.25)", "purpose": "A notification or reply card presented as a floating object." },
+      { "name": "window-float", "value": "0 1px 2px rgb(0 0 0 / 0.04), 0 30px 60px -30px rgb(0 0 0 / 0.25)", "purpose": "The app window in the hero." },
+      { "name": "raised-segment", "value": "0 1px 2px rgb(0 0 0 / 0.08)", "purpose": "The selected segment of a switch on a ground track." },
+      { "name": "listening-halo", "value": "0 0 0 3px rgb(40 136 136 / 0.2)", "purpose": "The mic dot while a line is being heard." },
+      { "name": "focus-ring", "value": "outline: 2px solid #288888; outline-offset: 3px; border-radius: 6px", "purpose": "Global :focus-visible treatment." }
+    ],
+    "motion": [
+      { "name": "ease-interface", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Every interface entrance: the rise and the thread-in." },
+      { "name": "rise", "value": "opacity 640ms, transform 640ms from translateY(14px); per-item delay via --rise-delay (70 to 90ms steps)", "purpose": "The one section entrance. Visible by default; only hidden when JavaScript marks data-inview=false under no-preference." },
+      { "name": "thread-in", "value": "320ms from opacity 0, translateY(8px)", "purpose": "A new bubble in the thread or a new panel in the feature tour." },
+      { "name": "colour-shift", "value": "300ms (rail rows, meters, faces) / 500ms (pinned panel wash)", "purpose": "Tint changes as the active agent changes." },
+      { "name": "crew-type", "value": "460ms steps(1) infinite, translateY(-1px) at 50%; right hand +230ms; per-agent --delay", "purpose": "Two-frame typing at the desks. Paused when done or glancing." },
+      { "name": "crew-output", "value": "4200ms steps(1) infinite, --i * 420ms stagger", "purpose": "Output lines appearing on a busy screen." },
+      { "name": "blink", "value": "900ms steps(1) infinite", "purpose": "Text cursors in bubbles and the WORKLOG panel." },
+      { "name": "voice-bar", "value": "620ms + n * 47ms, ease-in-out, alternate; scaleY 0.35 to --amp (0.7 rest, 1.9 speaking, --amp eased 500ms)", "purpose": "The voice pill's seven bars." },
+      { "name": "meter", "value": "520ms ease-in-out alternate, n * 80ms delay, scaleY 0.5 to 1.6", "purpose": "Reply voice meters." },
+      { "name": "ripple", "value": "700ms travel from pill to desk row, 500ms linger, downward half only; glance 1400ms", "purpose": "Pointer ripples in the Pixel Blast field; not tied to the hero script." },
+      { "name": "reduced-motion", "value": "all character keyframes and the pill transition set to none; output lines fully visible; rise renders its visible default", "purpose": "The finished state, still." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ],
+    "layout": [
+      { "name": "column", "value": "1120px, 24px side padding" },
+      { "name": "hero-window", "value": "1040px" },
+      { "name": "header-height", "value": "56px" },
+      { "name": "section-gap", "value": "128px, 160px from md" },
+      { "name": "pixel-cell", "value": "12px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Download for Windows. The one filled button on the page, hero and closing size.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 16 16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M1.5 3.2 7.2 2.4v5.3H1.5V3.2Zm0 9.6 5.7.8V8.4H1.5v4.4Zm6.3.9 6.7.9V8.4H7.8v5.3Zm0-11.4v5.4h6.7V1.4l-6.7.9Z\"/></svg>Download for Windows</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 8px; background: var(--color-ink, #09090b); color: #fff; font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); font-size: 15px; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 150ms; } .ds-btn-primary:hover { background: var(--color-ink-2, #3f3f46); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-bit, #288888); outline-offset: 3px; border-radius: 6px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "View the source. A white card at button height beside the primary.",
+      "html": "<a class=\"ds-btn-secondary\" href=\"#\">View the source</a>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 8px; border: 1px solid var(--color-line, #e4e4e7); background: var(--color-card, #fff); color: var(--color-ink, #09090b); font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); font-size: 15px; font-weight: 500; text-decoration: none; transition: background-color 150ms; } .ds-btn-secondary:hover { background: var(--color-ground, #fafafa); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--color-bit, #288888); outline-offset: 3px; border-radius: 6px; }"
+    },
+    {
+      "name": "Star Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "The header's GitHub link with the live star count.",
+      "html": "<a class=\"ds-chip\" href=\"#\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 16 16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M8 .8a7.2 7.2 0 0 0-2.3 14c.4.1.5-.1.5-.3v-1.3c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.7-.5 0-.5 0-.5.7 0 1.1.8 1.1.8.7 1.1 1.7.8 2.1.6.1-.5.3-.8.5-1-1.6-.2-3.3-.8-3.3-3.6 0-.8.3-1.4.7-1.9-.1-.2-.3-.9.1-1.9 0 0 .6-.2 2 .7a6.9 6.9 0 0 1 3.6 0c1.4-.9 2-.7 2-.7.4 1 .2 1.7.1 1.9.5.5.7 1.1.7 1.9 0 2.8-1.7 3.4-3.3 3.6.3.2.5.7.5 1.4v2c0 .2.1.4.5.3A7.2 7.2 0 0 0 8 .8Z\"/></svg><svg class=\"ds-chip-star\" width=\"12\" height=\"12\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 1.8l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.6l-3.8 2 .7-4.3-3.1-3 4.3-.6z\"/></svg><span class=\"ds-chip-num\">1.2k</span></a>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--color-line, #e4e4e7); background: var(--color-card, #fff); color: var(--color-ink, #09090b); font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); font-size: 13px; text-decoration: none; } .ds-chip:hover { background: var(--color-ground, #fafafa); } .ds-chip-star { color: var(--color-muted, #71717a); } .ds-chip-num { font-variant-numeric: tabular-nums; } .ds-chip:focus-visible { outline: 2px solid var(--color-bit, #288888); outline-offset: 3px; }"
+    },
+    {
+      "name": "Crew Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "An agent's pixel face and name, as used in the get-started step and rail rows.",
+      "html": "<span class=\"ds-crew-chip\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 8 8\" shape-rendering=\"crispEdges\" aria-hidden=\"true\"><rect x=\"1\" y=\"1\" width=\"6\" height=\"6\" fill=\"#288888\"/><rect x=\"2\" y=\"3\" width=\"1\" height=\"1\" fill=\"#fff\"/><rect x=\"5\" y=\"3\" width=\"1\" height=\"1\" fill=\"#fff\"/><rect x=\"0\" y=\"2\" width=\"1\" height=\"2\" fill=\"#288888\"/><rect x=\"7\" y=\"2\" width=\"1\" height=\"2\" fill=\"#288888\"/></svg>Bit</span>",
+      "css": ".ds-crew-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; border-radius: 8px; border: 1px solid var(--color-line, #e4e4e7); background: var(--color-card, #fff); color: var(--color-ink, #09090b); font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); font-size: 12px; } .ds-crew-chip svg { image-rendering: pixelated; }"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "card-panel",
+      "description": "A white hairline panel with a mono label row, the base container for every drawn demo.",
+      "html": "<div class=\"ds-panel\"><p class=\"ds-panel-label\">WORKLOG.md</p><p class=\"ds-panel-body\"><span class=\"ds-panel-key\">## Today</span><br>Picked up the beta tag question</p></div>",
+      "css": ".ds-panel { padding: 16px; border-radius: var(--radius-panel, 14px); border: 1px solid var(--color-line, #e4e4e7); background: var(--color-card, #fff); color: var(--color-ink-2, #3f3f46); font-family: var(--font-geist-mono, 'Geist Mono', ui-monospace, monospace); font-size: 12px; line-height: 1.7; } .ds-panel-label { margin: 0; color: var(--color-muted, #71717a); } .ds-panel-body { margin: 8px 0 0; } .ds-panel-key { color: var(--color-loop, #682c78); }"
+    },
+    {
+      "name": "Night Fact Cell",
+      "kind": "card",
+      "refersTo": "card-night",
+      "description": "One cell of the safety band's grid; teal key lifted for the dark ground.",
+      "html": "<div class=\"ds-night\"><dl class=\"ds-night-cell\"><dt>Keys</dt><dd>Uses the Claude Code login you already have. Nothing to paste.</dd></dl></div>",
+      "css": ".ds-night { padding: 16px; background: var(--color-night, #0a0a0b); } .ds-night-cell { margin: 0; padding: 24px; border-radius: var(--radius-panel, 14px); border: 1px solid var(--color-night-line, #27272a); background: var(--color-night-card, #131316); font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); } .ds-night-cell dt { font-size: 13px; font-weight: 500; color: #7fd1d1; } .ds-night-cell dd { margin: 12px 0 0; font-size: 15px; line-height: 1.5; color: #e4e4e7; }"
+    },
+    {
+      "name": "You Bubble",
+      "kind": "custom",
+      "refersTo": "bubble-you",
+      "description": "The visitor's spoken line. Ink fill, tinted wake word, cut corner toward the speaker.",
+      "html": "<div class=\"ds-you\"><span class=\"ds-you-name\">You</span><p class=\"ds-you-bubble\"><span class=\"ds-you-wake\">hey Block,</span> what's the status of my CI pipeline?</p></div>",
+      "css": ".ds-you { display: grid; gap: 4px; justify-items: end; max-width: 78%; margin-left: auto; text-align: right; font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); } .ds-you-name { font-family: var(--font-geist-mono, 'Geist Mono', ui-monospace, monospace); font-size: 11px; color: var(--color-muted, #71717a); } .ds-you-bubble { margin: 0; padding: 8px 12px; border-radius: 12px 12px 4px 12px; background: var(--color-ink, #09090b); color: #fff; font-size: 14px; line-height: 1.4; text-align: left; } .ds-you-wake { font-weight: 500; white-space: nowrap; color: color-mix(in srgb, var(--color-block, #cc2828) 55%, white); }"
+    },
+    {
+      "name": "Agent Bubble",
+      "kind": "custom",
+      "refersTo": "bubble-agent",
+      "description": "An agent's reply with its face, mono name, and a question's two chips.",
+      "html": "<div class=\"ds-agent\"><svg class=\"ds-agent-face\" width=\"22\" height=\"22\" viewBox=\"0 0 8 8\" shape-rendering=\"crispEdges\" aria-hidden=\"true\"><rect x=\"1\" y=\"1\" width=\"6\" height=\"6\" fill=\"#cc2828\"/><rect x=\"2\" y=\"3\" width=\"1\" height=\"1\" fill=\"#fff\"/><rect x=\"5\" y=\"3\" width=\"1\" height=\"1\" fill=\"#fff\"/></svg><span class=\"ds-agent-name\">Block</span><p class=\"ds-agent-bubble\">CI is green. Deploy to staging?<span class=\"ds-agent-ask\"><span class=\"ds-ask-yes\">Yes</span><span class=\"ds-ask-no\">Not yet</span></span></p></div>",
+      "css": ".ds-agent { display: grid; grid-template-columns: 22px 1fr; column-gap: 10px; row-gap: 4px; max-width: 78%; font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); } .ds-agent-face { grid-row: span 2; margin-top: 16px; image-rendering: pixelated; } .ds-agent-name { font-family: var(--font-geist-mono, 'Geist Mono', ui-monospace, monospace); font-size: 11px; color: var(--color-muted, #71717a); } .ds-agent-bubble { margin: 0; justify-self: start; padding: 8px 12px; border-radius: 12px 12px 12px 4px; border: 1px solid var(--color-line, #e4e4e7); background: var(--color-card, #fff); color: var(--color-ink, #09090b); font-size: 14px; line-height: 1.4; } .ds-agent-ask { display: flex; gap: 6px; margin-top: 8px; } .ds-ask-yes, .ds-ask-no { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; } .ds-ask-yes { background: var(--color-ink, #09090b); color: #fff; } .ds-ask-no { border: 1px solid var(--color-line, #e4e4e7); color: var(--color-ink-2, #3f3f46); }"
+    },
+    {
+      "name": "Mic Bar",
+      "kind": "input",
+      "refersTo": "input-bar",
+      "description": "The app window's input: ground inset, five level bars, placeholder, hotkey key.",
+      "html": "<div class=\"ds-mic\"><span class=\"ds-mic-bars\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i><i></i></span><span class=\"ds-mic-text\">Say hey and a name, or hold the hotkey</span><kbd class=\"ds-kbd\">Ctrl Space</kbd></div>",
+      "css": ".ds-mic { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--color-line, #e4e4e7); background: var(--color-ground, #fafafa); font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); } .ds-mic-bars { display: inline-flex; align-items: center; gap: 3px; height: 14px; } .ds-mic-bars i { display: block; width: 2px; height: 6px; border-radius: 2px; background: var(--color-line, #e4e4e7); transition: height 300ms, background-color 300ms; } .ds-mic:hover .ds-mic-bars i { background: var(--color-bit, #288888); } .ds-mic:hover .ds-mic-bars i:nth-child(2) { height: 13px; } .ds-mic:hover .ds-mic-bars i:nth-child(3) { height: 11px; } .ds-mic:hover .ds-mic-bars i:nth-child(4) { height: 9px; } .ds-mic-text { flex: 1; font-size: 13px; color: var(--color-muted, #71717a); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-kbd { font-family: var(--font-geist-mono, 'Geist Mono', ui-monospace, monospace); font-size: 0.8em; padding: 1px 6px; border: 1px solid var(--color-line, #e4e4e7); border-bottom-width: 2px; border-radius: 5px; background: var(--color-card, #fff); color: var(--color-muted, #71717a); }"
+    },
+    {
+      "name": "Voice Pill",
+      "kind": "custom",
+      "refersTo": "bubble-you",
+      "description": "The headline's verb as seven bars in an ink pill, sized to the cap height: teal at rest, the addressed agent's hue while a line is said. The one pixel-style element outside the characters.",
+      "html": "<h1 class=\"ds-h1\"><span class=\"ds-pill\"><span class=\"ds-sr\">Talk</span><i style=\"--n:0\"></i><i style=\"--n:1\"></i><i style=\"--n:2\"></i><i style=\"--n:3\"></i><i style=\"--n:4\"></i><i style=\"--n:5\"></i><i style=\"--n:6\"></i></span> to your agents</h1>",
+      "css": ".ds-h1 { margin: 0; font-family: var(--font-geist-sans, Geist, system-ui, sans-serif); font-size: 64px; font-weight: 500; line-height: 1.02; letter-spacing: -0.035em; color: var(--color-ink, #09090b); } .ds-pill { position: relative; top: -0.03em; margin-right: 0.06em; display: inline-flex; align-items: center; justify-content: center; gap: 0.055em; height: 0.72em; padding: 0 0.22em; border-radius: 9999px; background: var(--color-ink, #09090b); vertical-align: middle; } .ds-pill i { display: block; width: 0.06em; height: 0.3em; border-radius: 0.03em; background: var(--color-bit, #288888); transform-origin: center; animation: ds-voice-bar 720ms ease-in-out infinite alternate; animation-delay: calc(var(--n) * -110ms); animation-duration: calc(620ms + var(--n) * 47ms); } .ds-pill:hover i { animation-name: ds-voice-bar-hi; } .ds-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } @keyframes ds-voice-bar { from { transform: scaleY(0.35); } to { transform: scaleY(0.7); } } @keyframes ds-voice-bar-hi { from { transform: scaleY(0.35); } to { transform: scaleY(1.9); } } @media (prefers-reduced-motion: reduce) { .ds-pill i { animation: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Working Window",
+    "overview": "Open Room's page is the app itself, drawn at product-page scale: a white window on a near-white ground, zinc text, hairline borders, one black button. The only colour is the five agents, and the only pixels are the agents. Everything the interface does is smooth and contemporary; everything a character does is stepped and small. The screenshot is not a picture but a scene that plays once, and the visitor's voice is a visible object (the pill in the headline) that travels through a teal pixel field down to the desks.\n\nDensity is calm and generous. Sections sit 128 to 160px apart with a hairline or a large heading as their only announcement; no kicker labels, no icon-card grids, no serif, no cream. The category standard (Cursor, Conductor, Linear) executed at full craft, with the crew distributed down the page in the margins and on top of panels. Confirmed rejections: the earlier \"Reading lamp\" world (cream, serif, warm lamp light), pixel typefaces, retro-game chrome, human presenters.",
+    "keyCharacteristics": [
+      "Zinc neutrals on a #fafafa ground; a single dark band for safety.",
+      "Five agent hues as accents only: tinted text, dots, meters, rings, 6 to 9 percent washes. Never a fill behind text.",
+      "One filled black button per view; every other control is a white card with a hairline.",
+      "Geist at weight 500 for all headings with tight negative tracking; Geist Mono only for paths, keys, captions and the hero under-line.",
+      "Pixel art in exactly three homes: crew faces, crew at desks, the voice pill. The hero field behind them is coarse 12px squares on a canvas.",
+      "Two motion grammars that never mix: characters step, the interface eases."
+    ],
+    "rules": [
+      { "name": "The Five Hues Rule", "body": "Colour belongs to the agents. A hue appears only as a character's body, a tinted word or label, a 2 to 7px dot or meter, a ring in the pixel field, a border, or a wash of at most 9 percent (color-mix(in srgb, hue 6-9%, white)). It is never a full fill behind text and never a page-level accent detached from an agent.", "section": "colors" },
+      { "name": "The Tinted Wake Word Rule", "body": "In a \"You\" bubble the wake word is the agent's hue mixed 55 percent into white on the ink fill; the rest of the line is white. The address is coloured, the request is not.", "section": "colors" },
+      { "name": "The One Black Button Rule", "body": "The filled ink button is Download for Windows and nothing else. Every other action is a white card with a line hairline, and hover is a shade change (ground or ink-2), never a colour.", "section": "colors" },
+      { "name": "The Mono Boundary Rule", "body": "Geist Mono is allowed for paths, keys, status words, captions and the hero under-line. It never sets a heading, a lead, a button or body copy.", "section": "typography" },
+      { "name": "The Medium Heading Rule", "body": "Headings are weight 500 with negative tracking that tightens as size grows (-0.01em at 20px, -0.03em at 44px, -0.035em at 64px). No bold, no uppercase, no kicker above.", "section": "typography" },
+      { "name": "The Diffuse Only Rule", "body": "Interface shadows are soft, low-alpha and cast downward; a floating panel is the only thing that earns one. No hard offset shadows on any interface element.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use ink for the one filled button and every other control as a white card with a 1px line border.",
+      "Do carry agent colour as tinted text (55 percent into white on ink, the raw hue on white), a 2 to 7px dot or bar, a border, or a 6 to 9 percent wash. Lift a hue for dark ground the way night-key lifts Bit's teal.",
+      "Do set every heading in Geist at weight 500 with negative tracking and no label above it.",
+      "Do keep character motion in steps(1) and interface motion on cubic-bezier(0.16, 1, 0.3, 1); the rise entrance is 640ms from 14px below, opacity from 0, and every element renders visible by default so reduced motion and no-JavaScript show the finished state.",
+      "Do draw icons in the page's own stroke set (icons.tsx) and put pixel art only on the crew faces, the desk sprites, the voice pill and the hero field.",
+      "Do caption any drawn product image in 12px mono muted as an illustration."
+    ],
+    "donts": [
+      "Don't fill a surface with an agent hue and set text on it; the ceiling behind text is a 9 percent wash.",
+      "Don't add a second filled button, a coloured button, or a button whose hover changes hue rather than shade.",
+      "Don't set headings, leads, buttons or body in Geist Mono, and don't use a pixel or serif face anywhere.",
+      "Don't put a kicker or eyebrow label above a heading, or lay out a section as a grid of same-size icon cards.",
+      "Don't give interface elements a hard offset shadow, retro window chrome, or cream and warm-lamp tones from the rejected world.",
+      "Don't ease a character or step the interface; the two grammars never share a keyframe."
+    ]
+  }
+}

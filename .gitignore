@@ -54,3 +54,16 @@ assets/higgsfield/keyframes/hero/video/frames/
 assets/higgsfield/keyframes/hero/video/full/
 assets/higgsfield/keyframes/hero/video/*.png
 assets/higgsfield/keyframes/sections/S4-rejected*
+
+# agent tooling installed per machine (skills, impeccable binaries, browser scratch)
+.agents/
+.claude/skills/
+.claude/agents/
+.codex/
+.playwright-mcp/
+skills-lock.json
+
+# impeccable session output (screenshots, hook cache, decision pages)
+.impeccable/review/
+.impeccable/hook.cache.json
+.impeccable/questions/

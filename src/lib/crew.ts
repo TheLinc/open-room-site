@@ -23,7 +23,6 @@ export const crew: readonly CrewMember[] = [
   { id: "loop", name: "Loop", color: "#682c78", screen: "#e8d0f0" },
 ];
 
-export const crewById: Record<CrewId, CrewMember> = Object.fromEntries(crew.map((c) => [c.id, c])) as Record<
-  CrewId,
-  CrewMember
->;
+export const crewById: Record<CrewId, CrewMember> = Object.fromEntries(
+  crew.map((c) => [c.id, c]),
+) as Record<CrewId, CrewMember>;

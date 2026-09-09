@@ -63,16 +63,22 @@ function bbox(cells: Cell[]): Box {
 // Splits a traced sprite into the parts the animation moves or recolours.
 export function layersOf(sprite: Sprite): SpriteLayers {
   const rows = sprite.rows;
-  const cells = (pred: (ch: string, x: number, y: number) => boolean): Cell[] => {
+  const cells = (
+    pred: (ch: string, x: number, y: number) => boolean,
+  ): Cell[] => {
     const out: Cell[] = [];
     rows.forEach((line, y) => {
-      for (let x = 0; x < line.length; x++) if (pred(line[x], x, y)) out.push({ x, y });
+      for (let x = 0; x < line.length; x++)
+        if (pred(line[x], x, y)) out.push({ x, y });
     });
     return out;
   };
 
   // The desk top is the first row where wood reaches both edges of the slot.
-  const deskRow = rows.findIndex((line) => line.indexOf("k") <= 2 && line.lastIndexOf("k") >= line.length - 3);
+  const deskRow = rows.findIndex(
+    (line) =>
+      line.indexOf("k") <= 2 && line.lastIndexOf("k") >= line.length - 3,
+  );
 
   // The screen is the pale block above the desk; the monitor frame's top row
   // and the desk row bound it. Pale cells elsewhere are tracing noise.
@@ -86,7 +92,8 @@ export function layersOf(sprite: Sprite): SpriteLayers {
   let chairL = centre;
   let chairR = centre;
   while (chairL > 0 && "kts".includes(chairLine[chairL - 1])) chairL--;
-  while (chairR < sprite.width - 1 && "kts".includes(chairLine[chairR + 1])) chairR++;
+  while (chairR < sprite.width - 1 && "kts".includes(chairLine[chairR + 1]))
+    chairR++;
   const isHandRow = (y: number) => y >= deskRow - 2 && y <= deskRow;
   const handL = cells((ch, x, y) => ch === "X" && isHandRow(y) && x < chairL);
   const handR = cells((ch, x, y) => ch === "X" && isHandRow(y) && x > chairR);
@@ -97,7 +104,8 @@ export function layersOf(sprite: Sprite): SpriteLayers {
 
   const furniture: (Run & { ch: string })[] = [];
   for (const ch of ["k", "t", "s"]) {
-    for (const run of runsOf(cells((c) => c === ch))) furniture.push({ ...run, ch });
+    for (const run of runsOf(cells((c) => c === ch)))
+      furniture.push({ ...run, ch });
   }
 
   return {

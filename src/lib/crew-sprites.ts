@@ -7,18 +7,24 @@ export const spriteWood = "#483828";
 export const spriteSeat = "#a89878";
 export const spriteSeatDark = "#886848";
 
-export type Sprite = { id: string; x: number; width: number; height: number; rows: string[] };
+export type Sprite = {
+  id: string;
+  x: number;
+  width: number;
+  height: number;
+  rows: string[];
+};
 
 /** Width of the whole row in cells, so slots keep their spacing. */
 export const crewRowWidth = 157;
 
 export const crewSprites: Sprite[] = [
   {
-    "id": "clawd",
-    "x": 5,
-    "width": 30,
-    "height": 29,
-    "rows": [
+    id: "clawd",
+    x: 5,
+    width: 30,
+    height: 29,
+    rows: [
       "........kkkkkkkkkkkkkk........",
       ".......kSSSSSSSSSSSSSSk.......",
       ".......kSSSSSSSSSSSSSSk.......",
@@ -47,15 +53,15 @@ export const crewSprites: Sprite[] = [
       "...k..........kk..........k...",
       "...k..........kk..........k...",
       "............kkkkkk............",
-      "...........k......k..........."
-    ]
+      "...........k......k...........",
+    ],
   },
   {
-    "id": "bit",
-    "x": 36,
-    "width": 27,
-    "height": 29,
-    "rows": [
+    id: "bit",
+    x: 36,
+    width: 27,
+    height: 29,
+    rows: [
       "......kkXXXkkkkXXXXkk......",
       ".....kSSXSXSSSSSXSXSSk.....",
       ".....kSSXXXSSSSSXXXSSk.....",
@@ -84,15 +90,15 @@ export const crewSprites: Sprite[] = [
       ".kk.....SXXXSksSXXt.....tt.",
       ".kk.........Sks.........tt.",
       "..........Skkkkkt..........",
-      ".........Ss.....ts........."
-    ]
+      ".........Ss.....ts.........",
+    ],
   },
   {
-    "id": "terminal",
-    "x": 65,
-    "width": 26,
-    "height": 29,
-    "rows": [
+    id: "terminal",
+    x: 65,
+    width: 26,
+    height: 29,
+    rows: [
       "......skkkkkkkkkkkkk......",
       ".....sSSSSSSSSSSSSSSk.....",
       ".....stSSSSSSSSSSSSSk.....",
@@ -121,15 +127,15 @@ export const crewSprites: Sprite[] = [
       ".tt.....XXX.kk.XXX......k.",
       ".tt.........kk..........k.",
       "..........kkkkkk..........",
-      ".........kS.....k........."
-    ]
+      ".........kS.....k.........",
+    ],
   },
   {
-    "id": "block",
-    "x": 94,
-    "width": 27,
-    "height": 29,
-    "rows": [
+    id: "block",
+    x: 94,
+    width: 27,
+    height: 29,
+    rows: [
       "......kkkkkkkkkkkkkkk......",
       ".....kSSSSSSSSSSSSSSSk.....",
       ".....kSSSSSSSSSSSSSSSk.....",
@@ -158,15 +164,15 @@ export const crewSprites: Sprite[] = [
       ".k...........kk..........k.",
       ".k...........kk..........k.",
       "...........kkkkkk..........",
-      "..........k......k........."
-    ]
+      "..........k......k.........",
+    ],
   },
   {
-    "id": "loop",
-    "x": 124,
-    "width": 26,
-    "height": 29,
-    "rows": [
+    id: "loop",
+    x: 124,
+    width: 26,
+    height: 29,
+    rows: [
       "......kkkkkkkkkkkkkks.....",
       ".....kSSSSSSSSSSSSSSts....",
       ".....kSSSSSSSSSSSSSSts....",
@@ -195,7 +201,7 @@ export const crewSprites: Sprite[] = [
       ".k.......XX.SkkSXX.....Ss.",
       ".k..........Skk........Ss.",
       "...........kkkkkk.........",
-      "..........k.....Sk........"
-    ]
-  }
+      "..........k.....Sk........",
+    ],
+  },
 ];

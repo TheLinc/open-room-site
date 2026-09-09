@@ -18,16 +18,26 @@ export function isValidEmail(email: string): boolean {
   return EMAIL.test(email.trim());
 }
 
-export async function addToWaitlist(email: string, deps: WaitlistDeps): Promise<WaitlistResult> {
+export async function addToWaitlist(
+  email: string,
+  deps: WaitlistDeps,
+): Promise<WaitlistResult> {
   const clean = email.trim().toLowerCase();
-  if (!isValidEmail(clean)) return { status: "error", message: copy.form.invalid };
+  if (!isValidEmail(clean))
+    return { status: "error", message: copy.form.invalid };
 
   if (!deps.apiKey) {
-    console.error("RESEND_API_KEY is not set; waitlist signups cannot be stored");
+    console.error(
+      "RESEND_API_KEY is not set; waitlist signups cannot be stored",
+    );
     return { status: "error", message: copy.form.failed };
   }
 
-  const body: { email: string; unsubscribed: boolean; segments?: { id: string }[] } = {
+  const body: {
+    email: string;
+    unsubscribed: boolean;
+    segments?: { id: string }[];
+  } = {
     email: clean,
     unsubscribed: false,
   };

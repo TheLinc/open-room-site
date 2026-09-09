@@ -1,86 +1,224 @@
-export type AgentColor = "teal" | "red";
-export type PipStatus = "working" | "done";
+import type { CrewId } from "@/lib/crew";
 
-export interface Pip {
-  name: string;
-  color: AgentColor;
-  status: PipStatus;
-}
+/**
+ * The hero's script. Plays once, about twenty-five seconds, and rests on the
+ * finished conversation. It drives three things from one clock: the thread
+ * in the app window, the ripples through the pixel field, and the crew at
+ * their desks. Every line traces to a real capability in the app README.
+ */
 
-export interface Reply {
-  name: string;
-  color: AgentColor;
+export const CHAR_MS = 40;
+/** After the last character, how long before the agent starts working. */
+export const LAND_MS = 400;
+export const END_MS = 26000;
+/** A reply is "being spoken" for this long after it lands. */
+export const SPOKEN_MS = 2200;
+/** How long a ripple takes to travel from the pill to the desk row. */
+export const RIPPLE_MS = 700;
+/** How long an agent glances up once the ripple reaches it. */
+export const GLANCE_MS = 1400;
+
+export type HeroEvent =
+  | { at: number; kind: "say"; agent: CrewId; text: string }
+  | { at: number; kind: "reply"; agent: CrewId; text: string; ask?: boolean }
+  | { at: number; kind: "done"; agent: CrewId };
+
+export const SCRIPT: HeroEvent[] = [
+  { at: 800, kind: "say", agent: "bit", text: "hey Bit, run the tests" },
+  {
+    at: 4700,
+    kind: "say",
+    agent: "block",
+    text: "hey Block, what's the status of my CI pipeline?",
+  },
+  { at: 8200, kind: "reply", agent: "block", text: "Let me check that." },
+  {
+    at: 10700,
+    kind: "reply",
+    agent: "block",
+    text: "CI is green. Deploy to staging?",
+    ask: true,
+  },
+  { at: 12700, kind: "say", agent: "block", text: "yes, go ahead" },
+  { at: 14700, kind: "reply", agent: "bit", text: "Tests passed, 42 green." },
+  { at: 14700, kind: "done", agent: "bit" },
+  {
+    at: 17200,
+    kind: "say",
+    agent: "terminal",
+    text: "hey Terminal, what did Block change?",
+  },
+  {
+    at: 20700,
+    kind: "reply",
+    agent: "terminal",
+    text: "Two files in ci/. Want the diff?",
+    ask: true,
+  },
+  { at: 23200, kind: "reply", agent: "block", text: "Staging is live." },
+  { at: 23200, kind: "done", agent: "block" },
+];
+
+export type RowStatus = "listening" | "working" | "asking" | "done" | "";
+
+export interface HeroReply {
   text: string;
+  at: number;
+  ask: boolean;
+  /** Still being spoken aloud. */
+  playing: boolean;
 }
 
-export interface Talk {
-  color: AgentColor;
-  typed: string;
-  full: string;
+export interface Exchange {
+  agent: CrewId;
+  at: number;
+  text: string;
+  /** "hey Bit," or "" when the line has no wake word. */
+  wake: string;
+  /** Characters spoken so far. */
+  said: number;
+  /** The agent has been addressed: its row shows. */
+  called: boolean;
+  status: RowStatus;
+  replies: HeroReply[];
+}
+
+export interface Ripple {
+  agent: CrewId;
+  /** When it started, ms into the run. */
+  at: number;
 }
 
 export interface HeroState {
-  talk: Talk | null;
-  replies: Reply[];
-  pips: Pip[];
-  fading: boolean;
+  time: number;
+  ended: boolean;
+  /** A line is being spoken right now. */
+  speaking: boolean;
+  /** The agent the line being spoken is addressed to; the pill takes its colour. */
+  speakingTo: CrewId | null;
+  /** The agent whose name was just said, glancing up from its desk. */
+  glancing: CrewId | null;
+  /** Ripples that started recently, newest last. */
+  ripples: Ripple[];
+  /** Each agent's status at its desk. */
+  desks: Record<CrewId, "idle" | "working" | "done">;
+  exchanges: Exchange[];
 }
 
-export const CHAR_MS = 45;
-export const LOOP_MS = 18000;
-export const FADE_AT_MS = 17400;
+/** Splits "hey Block, run the tests" into the wake word and the rest. */
+export function splitWake(text: string): [string, string] {
+  const m = /^(hey \w+,?)(.*)$/i.exec(text);
+  return m ? [m[1], m[2]] : ["", text];
+}
 
-export type ScriptEvent =
-  | { at: number; kind: "pips"; pips: Pip[] }
-  | { at: number; kind: "reply"; reply: Reply }
-  | { at: number; kind: "talk"; color: AgentColor; text: string };
+export function saidCount(text: string, at: number, time: number): number {
+  if (time < at) return 0;
+  return Math.min(text.length, Math.floor((time - at) / CHAR_MS));
+}
 
-const atlasWorking: Pip = { name: "Atlas", color: "red", status: "working" };
-const junoWorking: Pip = { name: "Juno", color: "teal", status: "working" };
-const atlasDone: Pip = { name: "Atlas", color: "red", status: "done" };
+function landsAt(ev: { at: number; text: string }): number {
+  return ev.at + ev.text.length * CHAR_MS + LAND_MS;
+}
 
-// Times in ms from loop start. A talk event replaces the current talk line and types
-// it out from that moment; replies accumulate until the loop restarts.
-export const SCRIPT: ScriptEvent[] = [
-  { at: 0, kind: "pips", pips: [atlasWorking] },
-  { at: 1000, kind: "talk", color: "teal", text: "hey Juno, run the tests" },
-  { at: 4000, kind: "pips", pips: [atlasWorking, junoWorking] },
-  { at: 6000, kind: "talk", color: "red", text: "hey Atlas, what's the status of my CI pipeline?" },
-  { at: 9500, kind: "reply", reply: { name: "Atlas", color: "red", text: "Let me check that for you." } },
-  {
-    at: 13500,
-    kind: "reply",
-    reply: { name: "Atlas", color: "red", text: "The CI pipeline ran successfully." },
-  },
-  { at: 13500, kind: "pips", pips: [atlasDone, junoWorking] },
-];
+/** When the wake word of a line has been fully said. */
+function calledAt(ev: { at: number; text: string }): number {
+  const [wake] = splitWake(ev.text);
+  return ev.at + (wake ? wake.length : 3) * CHAR_MS;
+}
 
-export function stateAt(elapsedMs: number): HeroState {
-  const t = ((elapsedMs % LOOP_MS) + LOOP_MS) % LOOP_MS;
-  let pips: Pip[] = [];
-  let talk: Talk | null = null;
-  const replies: Reply[] = [];
+const AGENTS: CrewId[] = ["clawd", "bit", "terminal", "block", "loop"];
 
-  for (const ev of SCRIPT) {
-    if (ev.at > t) break;
-    switch (ev.kind) {
-      case "pips":
-        pips = ev.pips;
-        break;
-      case "reply":
-        replies.push(ev.reply);
-        break;
-      case "talk": {
-        const chars = Math.min(ev.text.length, Math.floor((t - ev.at) / CHAR_MS));
-        talk = { color: ev.color, typed: ev.text.slice(0, chars), full: ev.text };
-        break;
-      }
-    }
+export function heroStateAt(elapsedMs: number): HeroState {
+  const time = Math.min(Math.max(0, elapsedMs), END_MS);
+  const says = SCRIPT.filter(
+    (e): e is Extract<HeroEvent, { kind: "say" }> =>
+      e.kind === "say" && e.at <= time,
+  );
+  const done = new Set(CHAT_DONE(time));
+
+  const exchanges: Exchange[] = says.map((say, i) => {
+    const [wake] = splitWake(say.text);
+    const said = saidCount(say.text, say.at, time);
+    const called = time >= calledAt(say);
+    const next = says.slice(i + 1).find((s) => s.agent === say.agent);
+    const to = next ? next.at : Infinity;
+    const replies: HeroReply[] = SCRIPT.flatMap((e) =>
+      e.kind === "reply" &&
+      e.agent === say.agent &&
+      e.at >= say.at &&
+      e.at < to &&
+      e.at <= time
+        ? [
+            {
+              text: e.text,
+              at: e.at,
+              ask: Boolean(e.ask),
+              playing: time - e.at < SPOKEN_MS,
+            },
+          ]
+        : [],
+    );
+    let status: RowStatus;
+    if (next) status = "";
+    else if (done.has(say.agent)) status = "done";
+    else if (replies.length && replies[replies.length - 1].ask)
+      status = "asking";
+    else if (time >= landsAt(say)) status = "working";
+    else status = "listening";
+    return {
+      agent: say.agent,
+      at: say.at,
+      text: say.text,
+      wake,
+      said,
+      called,
+      status,
+      replies,
+    };
+  });
+
+  const spoken = says.find(
+    (s) => time >= s.at && time < s.at + s.text.length * CHAR_MS,
+  );
+  const speaking = Boolean(spoken);
+  const speakingTo = spoken ? spoken.agent : null;
+
+  // The ripple leaves the pill the moment the name is out; the agent glances
+  // up when it arrives at the desks.
+  let glancing: CrewId | null = null;
+  const ripples: Ripple[] = [];
+  for (const s of says) {
+    const at = calledAt(s);
+    if (time >= at + RIPPLE_MS && time < at + RIPPLE_MS + GLANCE_MS)
+      glancing = s.agent;
+    if (time >= at) ripples.push({ agent: s.agent, at });
   }
 
-  return { talk, replies, pips, fading: t >= FADE_AT_MS };
+  const desks = Object.fromEntries(
+    AGENTS.map((id) => [id, "idle"]),
+  ) as HeroState["desks"];
+  for (const s of says) if (time >= landsAt(s)) desks[s.agent] = "working";
+  for (const id of done) desks[id] = "done";
+
+  return {
+    time,
+    ended: time >= END_MS,
+    speaking,
+    speakingTo,
+    glancing,
+    ripples,
+    desks,
+    exchanges,
+  };
 }
 
-export function reducedMotionState(): HeroState {
-  return { ...stateAt(3000), fading: false };
+function CHAT_DONE(time: number): CrewId[] {
+  return SCRIPT.filter((e) => e.kind === "done" && e.at <= time).map(
+    (e) => e.agent,
+  );
+}
+
+/** The finished conversation, for reduced motion and after the run. */
+export function heroStill(): HeroState {
+  return { ...heroStateAt(END_MS), ripples: [] };
 }
