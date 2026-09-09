@@ -35,19 +35,38 @@ describe("hero script", () => {
       heroStateAt(800 + CHAR_MS * 8 + RIPPLE_MS + GLANCE_MS + 10).glancing,
     ).toBeNull();
     expect(heroStateAt(2600).desks.bit).toBe("working");
+    expect(heroStateAt(2600).exchanges[0].landed).toBe(true);
   });
 
-  test("an agent that asks back is marked asking, and the answer routes to it without a wake word", () => {
+  test("the window shows whoever something last happened to", () => {
+    expect(heroStateAt(0).selected).toBe("bit");
+    expect(heroStateAt(5000).selected).toBe("block");
+    expect(heroStateAt(15000).selected).toBe("bit");
+    expect(heroStateAt(18000).selected).toBe("terminal");
+    expect(heroStateAt(END_MS).selected).toBe("block");
+  });
+
+  test("a permission request holds the agent until it is allowed", () => {
     const asked = heroStateAt(11200);
     const block = asked.exchanges.find((x) => x.agent === "block")!;
     expect(block.status).toBe("asking");
-    const answered = heroStateAt(13700);
-    expect(answered.exchanges[2]).toMatchObject({
-      agent: "block",
-      wake: "",
-      called: true,
+    expect(block.replies[1].permission).toMatchObject({
+      tool: "Bash",
+      command: "npm run deploy -- staging",
+      allowedAt: null,
     });
-    expect(answered.exchanges[1].status).toBe("");
+    const allowed = heroStateAt(13000);
+    const after = allowed.exchanges.find((x) => x.agent === "block")!;
+    expect(after.status).toBe("working");
+    expect(after.replies[1].permission?.allowedAt).toBe(12700);
+  });
+
+  test("a plain question marks the agent asking", () => {
+    const terminal = heroStateAt(21000).exchanges.find(
+      (x) => x.agent === "terminal",
+    )!;
+    expect(terminal.status).toBe("asking");
+    expect(terminal.replies[0].permission).toBeNull();
   });
 
   test("two agents work at once and finish in their own time", () => {
@@ -64,7 +83,7 @@ describe("hero script", () => {
     const end = heroStateAt(END_MS + 5000);
     expect(end.ended).toBe(true);
     expect(end.time).toBe(END_MS);
-    expect(end.exchanges).toHaveLength(4);
+    expect(end.exchanges).toHaveLength(3);
     expect(end.desks).toEqual({
       clawd: "idle",
       bit: "done",

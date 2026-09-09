@@ -2,9 +2,10 @@ import type { CrewId } from "@/lib/crew";
 
 /**
  * The hero's script. Plays once, about twenty-five seconds, and rests on the
- * finished conversation. It drives three things from one clock: the thread
- * in the app window, the ripples through the pixel field, and the crew at
- * their desks. Every line traces to a real capability in the app README.
+ * finished conversation. It drives three things from one clock: the panes
+ * in the app window, the voice pill, and the crew at their desks. Every line
+ * traces to a real capability in the app README, and the window follows the
+ * real app: one conversation per agent, tool rows, a permission card.
  */
 
 export const CHAR_MS = 40;
@@ -13,14 +14,27 @@ export const LAND_MS = 400;
 export const END_MS = 26000;
 /** A reply is "being spoken" for this long after it lands. */
 export const SPOKEN_MS = 2200;
-/** How long a ripple takes to travel from the pill to the desk row. */
+/** How long after the name is said the agent reacts at its desk. */
 export const RIPPLE_MS = 700;
-/** How long an agent glances up once the ripple reaches it. */
+/** How long an agent glances up once it has heard its name. */
 export const GLANCE_MS = 1400;
+
+export interface Permission {
+  tool: string;
+  command: string;
+}
 
 export type HeroEvent =
   | { at: number; kind: "say"; agent: CrewId; text: string }
-  | { at: number; kind: "reply"; agent: CrewId; text: string; ask?: boolean }
+  | {
+      at: number;
+      kind: "reply";
+      agent: CrewId;
+      text: string;
+      ask?: boolean;
+      permission?: Permission;
+    }
+  | { at: number; kind: "allow"; agent: CrewId }
   | { at: number; kind: "done"; agent: CrewId };
 
 export const SCRIPT: HeroEvent[] = [
@@ -36,10 +50,10 @@ export const SCRIPT: HeroEvent[] = [
     at: 10700,
     kind: "reply",
     agent: "block",
-    text: "CI is green. Deploy to staging?",
-    ask: true,
+    text: "CI is green on main. I can deploy it to staging.",
+    permission: { tool: "Bash", command: "npm run deploy -- staging" },
   },
-  { at: 12700, kind: "say", agent: "block", text: "yes, go ahead" },
+  { at: 12700, kind: "allow", agent: "block" },
   { at: 14700, kind: "reply", agent: "bit", text: "Tests passed, 42 green." },
   { at: 14700, kind: "done", agent: "bit" },
   {
@@ -59,12 +73,32 @@ export const SCRIPT: HeroEvent[] = [
   { at: 23200, kind: "done", agent: "block" },
 ];
 
+/** What each agent runs first, shown as the collapsed tool row. */
+export const TOOL_ROWS: Record<CrewId, string> = {
+  clawd: "Read",
+  bit: "Bash",
+  terminal: "Read",
+  block: "Bash",
+  loop: "Read",
+};
+
+/** Turn counts and cost for the finished conversations, as the app shows them. */
+export const TURNS: Record<CrewId, { turns: number; cost: string }> = {
+  clawd: { turns: 0, cost: "$0.0000" },
+  bit: { turns: 3, cost: "$0.0412" },
+  terminal: { turns: 2, cost: "$0.0186" },
+  block: { turns: 5, cost: "$0.1219" },
+  loop: { turns: 0, cost: "$0.0000" },
+};
+
 export type RowStatus = "listening" | "working" | "asking" | "done" | "";
 
 export interface HeroReply {
   text: string;
   at: number;
   ask: boolean;
+  /** A permission card, resolved once allowedAt is set. */
+  permission: (Permission & { allowedAt: number | null }) | null;
   /** Still being spoken aloud. */
   playing: boolean;
 }
@@ -79,6 +113,8 @@ export interface Exchange {
   said: number;
   /** The agent has been addressed: its row shows. */
   called: boolean;
+  /** The prompt has been handed over and the agent has started. */
+  landed: boolean;
   status: RowStatus;
   replies: HeroReply[];
 }
@@ -96,6 +132,8 @@ export interface HeroState {
   speaking: boolean;
   /** The agent the line being spoken is addressed to; the pill takes its colour. */
   speakingTo: CrewId | null;
+  /** The agent whose pane the window shows: whoever something last happened to. */
+  selected: CrewId;
   /** The agent whose name was just said, glancing up from its desk. */
   glancing: CrewId | null;
   /** Ripples that started recently, newest last. */
@@ -116,7 +154,7 @@ export function saidCount(text: string, at: number, time: number): number {
   return Math.min(text.length, Math.floor((time - at) / CHAR_MS));
 }
 
-function landsAt(ev: { at: number; text: string }): number {
+export function landsAt(ev: { at: number; text: string }): number {
   return ev.at + ev.text.length * CHAR_MS + LAND_MS;
 }
 
@@ -134,36 +172,55 @@ export function heroStateAt(elapsedMs: number): HeroState {
     (e): e is Extract<HeroEvent, { kind: "say" }> =>
       e.kind === "say" && e.at <= time,
   );
-  const done = new Set(CHAT_DONE(time));
+  const done = new Set(
+    SCRIPT.filter((e) => e.kind === "done" && e.at <= time).map((e) => e.agent),
+  );
 
   const exchanges: Exchange[] = says.map((say, i) => {
     const [wake] = splitWake(say.text);
     const said = saidCount(say.text, say.at, time);
     const called = time >= calledAt(say);
+    const landed = time >= landsAt(say);
     const next = says.slice(i + 1).find((s) => s.agent === say.agent);
     const to = next ? next.at : Infinity;
-    const replies: HeroReply[] = SCRIPT.flatMap((e) =>
-      e.kind === "reply" &&
-      e.agent === say.agent &&
-      e.at >= say.at &&
-      e.at < to &&
-      e.at <= time
-        ? [
-            {
-              text: e.text,
-              at: e.at,
-              ask: Boolean(e.ask),
-              playing: time - e.at < SPOKEN_MS,
-            },
-          ]
-        : [],
-    );
+    const replies: HeroReply[] = SCRIPT.flatMap((e) => {
+      if (
+        e.kind !== "reply" ||
+        e.agent !== say.agent ||
+        e.at < say.at ||
+        e.at >= to ||
+        e.at > time
+      )
+        return [];
+      const allow = SCRIPT.find(
+        (a) =>
+          a.kind === "allow" &&
+          a.agent === say.agent &&
+          a.at >= e.at &&
+          a.at <= time,
+      );
+      return [
+        {
+          text: e.text,
+          at: e.at,
+          ask: Boolean(e.ask),
+          permission: e.permission
+            ? { ...e.permission, allowedAt: allow ? allow.at : null }
+            : null,
+          playing: time - e.at < SPOKEN_MS,
+        },
+      ];
+    });
+    const last = replies[replies.length - 1];
     let status: RowStatus;
     if (next) status = "";
     else if (done.has(say.agent)) status = "done";
-    else if (replies.length && replies[replies.length - 1].ask)
+    else if (
+      last &&
+      (last.ask || (last.permission && !last.permission.allowedAt))
+    )
       status = "asking";
-    else if (time >= landsAt(say)) status = "working";
+    else if (landed) status = "working";
     else status = "listening";
     return {
       agent: say.agent,
@@ -172,6 +229,7 @@ export function heroStateAt(elapsedMs: number): HeroState {
       wake,
       said,
       called,
+      landed,
       status,
       replies,
     };
@@ -183,8 +241,12 @@ export function heroStateAt(elapsedMs: number): HeroState {
   const speaking = Boolean(spoken);
   const speakingTo = spoken ? spoken.agent : null;
 
-  // The ripple leaves the pill the moment the name is out; the agent glances
-  // up when it arrives at the desks.
+  // The window shows whoever something last happened to, the way a
+  // notification brings you to that agent's pane.
+  const latest = SCRIPT.filter((e) => e.at <= time).at(-1);
+  const selected: CrewId = latest ? latest.agent : "bit";
+
+  // The name is out; a beat later the agent glances up from its desk.
   let glancing: CrewId | null = null;
   const ripples: Ripple[] = [];
   for (const s of says) {
@@ -205,17 +267,12 @@ export function heroStateAt(elapsedMs: number): HeroState {
     ended: time >= END_MS,
     speaking,
     speakingTo,
+    selected,
     glancing,
     ripples,
     desks,
     exchanges,
   };
-}
-
-function CHAT_DONE(time: number): CrewId[] {
-  return SCRIPT.filter((e) => e.kind === "done" && e.at <= time).map(
-    (e) => e.agent,
-  );
 }
 
 /** The finished conversation, for reduced motion and after the run. */

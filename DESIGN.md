@@ -126,17 +126,18 @@ components:
     rounded: "{rounded.panel}"
     padding: "24px"
   bubble-you:
-    backgroundColor: "{colors.ink}"
-    textColor: "#ffffff"
-    typography: "{typography.small}"
-    rounded: "{rounded.lg}"
-    padding: "8px 12px"
-  bubble-agent:
-    backgroundColor: "{colors.card}"
+    backgroundColor: "{colors.line-soft}"
     textColor: "{colors.ink}"
     typography: "{typography.small}"
     rounded: "{rounded.lg}"
     padding: "8px 12px"
+  thread-row:
+    backgroundColor: "{colors.card}"
+    borderColor: "{colors.line}"
+    textColor: "{colors.ink-2}"
+    typography: "{typography.small}"
+    rounded: "{rounded.md}"
+    height: "32px"
   input-bar:
     backgroundColor: "{colors.ground}"
     textColor: "{colors.ink}"
@@ -177,7 +178,7 @@ A near-monochrome zinc surface where the five agents supply every hue.
 
 ### Primary
 
-- **Ink** (`{colors.ink}`): headings, body, the filled button, the "You" speech bubble, the voice pill. The page's one strong colour is black.
+- **Ink** (`{colors.ink}`): headings, body, the filled button, the voice pill. The page's one strong colour is black.
 
 ### Secondary
 
@@ -207,7 +208,7 @@ The five agent hues. Each belongs to one character and is used only where that c
 
 **The Five Hues Rule.** Colour belongs to the agents. A hue appears only as a character's body, a tinted word or label, a 2 to 7px dot or meter, a ring in the pixel field, a border, or a wash of at most 9 percent (`color-mix(in srgb, hue 6-9%, white)`). It is never a full fill behind text and never a page-level accent detached from an agent.
 
-**The Tinted Wake Word Rule.** In a "You" bubble the wake word is the agent's hue mixed 55 percent into white on the ink fill; the rest of the line is white. The address is coloured, the request is not.
+**The Tinted Wake Word Rule.** In a "You" bubble the wake word is set in the agent's hue as text on the `{colors.line-soft}` field; the rest of the line is ink. The address is coloured, the request is not.
 
 **The One Black Button Rule.** The filled `{colors.ink}` button is Download for Windows and nothing else. Every other action is a white card with a `{colors.line}` hairline, and hover is a shade change (`{colors.ground}` or `{colors.ink-2}`), never a colour.
 
@@ -300,12 +301,15 @@ Quiet and product-like: the filled one is the call to action, the outlined one i
 
 - **Style:** sticky 56px header. Wordmark is the logo at 22px tall, brightness zero, beside the name at 15px semibold, tracking -0.01em. Anchors are 14px `{colors.ink-2}`, hover `{colors.ink}`, hidden below sm. The footer repeats the pattern at 13px `{colors.muted}` on a `{colors.line}` top rule.
 
-### Speech bubbles
+### Speech bubbles and thread rows
 
-The page's model of a conversation, reused in the hero window, the how-it-works step and the feature panel.
+The page's model of a conversation follows the app's light theme. It is reused in the hero window, the how-it-works step and the feature panel.
 
-- **You:** `{colors.ink}` fill, white 14px text, 12px radius with the bottom-right corner at 4px, right-aligned to 78 percent width, labelled "You" in 11px mono above. The wake word is the addressed agent's hue mixed 55 percent into white. While being typed, a 2px white cursor blinks in 900ms steps.
-- **Agent:** `{colors.card}` fill, `{colors.line}` hairline, `{colors.ink}` 14px text, bottom-left corner at 4px, a 22px pixel face and 11px mono name beside it. A spoken reply appends a four-bar meter in the agent's hue; a question appends "Yes" (ink fill) and "Not yet" (hairline) 11px chips.
+- **You:** `{colors.line-soft}` field, `{colors.ink}` 13 to 15px text, 12px radius, right-aligned to 80 percent width. The wake word is the addressed agent's hue, medium weight, never wrapped. In the hero the line types into the composer first, with the mic icon in Bit's teal, and lands in the thread as a bubble when it is complete.
+- **Agent:** plain `{colors.ink}` text with no bubble and no avatar, as the app renders replies. A spoken reply appends a four-bar meter in the agent's hue.
+- **Thread rows:** 32px hairline rows with a muted icon and 12px text for the collapsed steps the app shows: "Thinking", the tool name in mono ("Bash", "Read"), and "Turn complete · n turns · $cost" when the agent finishes.
+- **Permission card:** when an agent needs approval, an amber card (`#fffbeb` fill, `#e6c46a` border, `#b58a1e` shield) titled "Block wants to use Bash", the command in a mono inset, "This command requires approval", and three actions: "Allow once" (ink fill), "Allow for this session" (hairline), "Decline" (text). Once allowed it collapses to a tool row marked "allowed once".
+- **Agent header:** above every thread, the agent's colour dot, name, conversation title with a chevron, and a status line ("Not running", "Working · 3 turns", "Ready · 5 turns · $0.1219"), with the model chip and an Edit button on the right.
 
 ### Voice pill
 

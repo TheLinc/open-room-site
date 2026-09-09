@@ -1,9 +1,31 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { CrewFace } from "@/components/crew-face";
+import {
+  ArrowUpIcon,
+  BrainIcon,
+  ChevronIcon,
+  GearIcon,
+  MicIcon,
+  PaperclipIcon,
+  PencilIcon,
+  PlusIcon,
+  ShieldIcon,
+  SlidersIcon,
+  TerminalIcon,
+  WrenchIcon,
+} from "@/components/icons";
 import { crew, crewById, type CrewId } from "@/lib/crew";
-import { type Exchange, type HeroState } from "@/lib/hero-script";
+import {
+  TOOL_ROWS,
+  TURNS,
+  landsAt,
+  type Exchange,
+  type HeroState,
+} from "@/lib/hero-script";
+import logo from "@/assets/brand/logo.png";
 
 // Each agent's folder: the thing that makes it a separate Claude Code session.
 const folders: Record<CrewId, string> = {
@@ -14,138 +36,110 @@ const folders: Record<CrewId, string> = {
   loop: "~/work/docs",
 };
 
-type Item =
-  | {
-      kind: "you";
-      at: number;
-      agent: CrewId;
-      text: string;
-      wake: string;
-      said: number;
-    }
-  | {
-      kind: "agent";
-      at: number;
-      agent: CrewId;
-      text: string;
-      ask: boolean;
-      playing: boolean;
-    };
-
-function itemsOf(exchanges: Exchange[]): Item[] {
-  const items: Item[] = [];
-  for (const ex of exchanges) {
-    items.push({
-      kind: "you",
-      at: ex.at,
-      agent: ex.agent,
-      text: ex.text,
-      wake: ex.wake,
-      said: ex.said,
-    });
-    for (const r of ex.replies)
-      items.push({
-        kind: "agent",
-        at: r.at,
-        agent: ex.agent,
-        text: r.text,
-        ask: r.ask,
-        playing: r.playing,
-      });
-  }
-  return items.sort((a, b) => a.at - b.at);
+/** The conversation's title, as the app derives one from the first line. */
+function titleOf(ex: Exchange | undefined): string {
+  if (!ex || !ex.landed) return "New conversation";
+  const rest = ex.text.slice(ex.wake.length).trim().replace(/[?.]$/, "");
+  return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
-function railStatus(state: HeroState, id: CrewId): string {
-  if (state.glancing === id) return "listening";
-  const ex = [...state.exchanges].reverse().find((e) => e.agent === id);
-  if (ex && ex.status === "asking") return "asking";
-  if (ex && ex.status === "listening") return "listening";
-  return state.desks[id];
+function statusLine(ex: Exchange | undefined, id: CrewId): string {
+  if (!ex || !ex.landed) return "Not running";
+  const { turns, cost } = TURNS[id];
+  if (ex.status === "done") return `Ready · ${turns} turns · ${cost}`;
+  const seen = ex.replies.length;
+  return seen ? `Working · ${seen + 1} turns` : "Working";
 }
 
-/** The line you are saying, typed out as it is heard. */
-function micLine(state: HeroState): { text: string; agent: CrewId } | null {
-  const live = state.exchanges.find((e) => e.said < e.text.length);
-  return live
-    ? { text: live.text.slice(0, live.said), agent: live.agent }
-    : null;
+function Row({
+  icon,
+  children,
+  className = "",
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`flex h-8 items-center gap-2 rounded-md border border-line px-2.5 text-[12px] text-ink-2 ${className}`}
+    >
+      <span className="text-muted">{icon}</span>
+      {children}
+    </div>
+  );
 }
 
-// The Open Room window, drawn in its own register: agents down the side,
-// the conversation in the middle, the mic along the bottom. The hero script
-// plays inside it.
+// The Open Room window as the app draws it in its light theme: agents down
+// the side, one conversation per agent, tool rows and a permission card in
+// the thread, the composer along the bottom. The hero script plays inside.
 export function AppWindow({ state }: { state: HeroState }) {
-  const items = itemsOf(state.exchanges);
-  const mic = micLine(state);
-  const latest = items[items.length - 1];
+  const id = state.selected;
+  const member = crewById[id];
+  const ex = [...state.exchanges].reverse().find((e) => e.agent === id);
+  const line = state.exchanges.find(
+    (e) => e.agent === id && e.said < e.text.length,
+  );
+  const landed = ex && ex.landed ? ex : undefined;
+  const thinking = landed && state.time >= landsAt(landed) + 300;
+  const toolRow = landed && state.time >= landsAt(landed) + 900;
+  const latestAt = landed
+    ? Math.max(
+        landed.at,
+        ...landed.replies.map((r) => r.at),
+        ...landed.replies.map((r) => r.permission?.allowedAt ?? 0),
+      )
+    : 0;
 
-  // The thread starts at the top, like a real conversation, and slides up
-  // smoothly once it outgrows the frame so the newest line stays in view.
+  // The thread starts at the top, like the app, and slides up smoothly once
+  // it outgrows the frame so the newest line stays in view.
   const frameRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLOListElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const frame = frameRef.current;
     const list = listRef.current;
     if (!frame || !list) return;
     const over = Math.max(0, list.scrollHeight - frame.clientHeight);
     list.style.transform = `translateY(${-over}px)`;
-  }, [items.length, state.exchanges]);
+  }, [id, latestAt, thinking, toolRow]);
 
   return (
     <div className="overflow-hidden rounded-panel border border-line bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_30px_60px_-30px_rgb(0_0_0/0.25)]">
-      <div className="flex h-10 items-center gap-3 border-b border-line px-3.5 text-xs text-muted">
-        <span className="inline-flex gap-1.5" aria-hidden="true">
-          <i className="h-2.5 w-2.5 rounded-full bg-line" />
-          <i className="h-2.5 w-2.5 rounded-full bg-line" />
-          <i className="h-2.5 w-2.5 rounded-full bg-line" />
-        </span>
-        <b className="flex-1 text-center font-medium text-ink-2">Open Room</b>
-        <span
-          className={`inline-flex items-center gap-1.5 font-mono text-[11px] ${mic ? "text-bit" : "text-muted"}`}
-        >
-          <i
-            className={`h-[7px] w-[7px] rounded-full ${mic ? "bg-bit shadow-[0_0_0_3px_rgb(40_136_136/0.2)]" : "bg-line"}`}
-          />
-          {mic ? "listening" : "ready"}
-        </span>
+      <div className="flex h-9 items-center gap-2 border-b border-line px-3 text-[12px] text-ink">
+        <Image
+          src={logo}
+          alt=""
+          className="brightness-0"
+          style={{ height: 14, width: "auto" }}
+        />
+        Open Room
       </div>
 
-      <div className="grid h-[340px] md:grid-cols-[224px_1fr]">
-        <aside className="hidden border-r border-line bg-[#fcfcfd] p-2.5 md:block">
-          <div className="px-2 pb-2 pt-1.5 text-[11px] font-medium text-muted">
-            Agents
+      <div className="grid h-[340px] md:grid-cols-[212px_1fr]">
+        <aside className="hidden border-r border-line p-2 md:block">
+          <div className="flex justify-end gap-1 px-1 pb-2 pt-1 text-muted">
+            <span className="grid h-6 w-6 place-items-center rounded-md">
+              <PlusIcon size={14} />
+            </span>
+            <span className="grid h-6 w-6 place-items-center rounded-md">
+              <GearIcon size={14} />
+            </span>
           </div>
           <ul className="grid gap-0.5">
             {crew.map((m) => {
-              const status = railStatus(state, m.id);
-              const lit = status !== "idle";
+              const on = m.id === id;
+              const lit = state.desks[m.id] !== "idle";
               return (
                 <li
                   key={m.id}
-                  className="grid grid-cols-[26px_1fr_auto] items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-300"
-                  style={{
-                    background: lit
-                      ? `color-mix(in srgb, ${m.color} 9%, transparent)`
-                      : "transparent",
-                  }}
+                  className={`grid grid-cols-[22px_1fr_auto] items-center gap-2.5 rounded-lg px-2 py-1.5 text-[13px] transition-colors duration-300 ${on ? "bg-line-soft text-ink" : "text-ink-2"}`}
                 >
-                  <CrewFace id={m.id} size={26} className="pixel" />
-                  <span className="grid leading-[1.15]">
-                    <b className="text-[13px] font-medium">{m.name}</b>
-                    <small className="font-mono text-[10.5px] text-muted">
-                      {folders[m.id]}
-                    </small>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-muted">
-                    {lit ? status : ""}
-                    <i
-                      className="h-[7px] w-[7px] rounded-full transition-colors duration-300"
-                      style={{
-                        background: lit ? m.color : "var(--color-line)",
-                      }}
-                    />
-                  </span>
+                  <CrewFace id={m.id} size={22} className="pixel" />
+                  <span>{m.name}</span>
+                  <i
+                    className="h-[6px] w-[6px] rounded-full transition-opacity duration-300"
+                    style={{ background: m.color, opacity: lit ? 1 : 0 }}
+                  />
                 </li>
               );
             })}
@@ -153,75 +147,78 @@ export function AppWindow({ state }: { state: HeroState }) {
         </aside>
 
         <section className="flex min-h-0 flex-col">
+          <header className="flex items-center gap-3 border-b border-line px-4 py-2.5">
+            <i
+              className="h-[9px] w-[9px] rounded-full"
+              style={{ background: member.color }}
+            />
+            <div className="min-w-0 flex-1 leading-tight">
+              <div className="flex items-center gap-2 text-[13px]">
+                <b className="font-medium">{member.name}</b>
+                <span className="truncate text-ink-2">{titleOf(ex)}</span>
+                <ChevronIcon size={12} className="shrink-0 text-muted" />
+              </div>
+              <div className="mt-0.5 text-[11px] text-muted">
+                {statusLine(ex, id)}
+              </div>
+            </div>
+            <span className="hidden items-center gap-1.5 text-[12px] text-ink-2 sm:inline-flex">
+              <SlidersIcon size={12} className="text-muted" />
+              Sonnet 5
+              <ChevronIcon size={11} className="text-muted" />
+            </span>
+            <span className="hidden h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-[12px] font-medium sm:inline-flex">
+              <PencilIcon size={12} />
+              Edit
+            </span>
+          </header>
+
           <div
             ref={frameRef}
             className="min-h-0 flex-1 overflow-hidden"
             style={{
-              maskImage: "linear-gradient(to bottom, transparent, black 28px)",
+              maskImage: "linear-gradient(to bottom, transparent, black 24px)",
               WebkitMaskImage:
-                "linear-gradient(to bottom, transparent, black 28px)",
+                "linear-gradient(to bottom, transparent, black 24px)",
             }}
           >
-            <ol
-              ref={listRef}
-              className="flex flex-col gap-3.5 px-5 pb-3 pt-4 transition-transform duration-500 ease-out"
-            >
-              {items.map((item) => {
-                const m = crewById[item.agent];
-                const fresh = item === latest;
-                const tint = { "--agent": m.color } as CSSProperties;
-                if (item.kind === "you") {
-                  const wakeLen = item.wake.length;
-                  const shownWake = item.text.slice(
-                    0,
-                    Math.min(item.said, wakeLen),
-                  );
-                  const shownRest = item.text.slice(wakeLen, item.said);
-                  return (
-                    <li
-                      key={`you:${item.at}`}
-                      className={`grid max-w-[78%] gap-1 self-end text-right ${fresh ? "thread-in" : ""}`}
-                      style={tint}
+            {landed ? (
+              <div
+                key={id}
+                ref={listRef}
+                className="flex flex-col gap-2.5 px-4 pb-3 pt-3.5 transition-transform duration-500 ease-out"
+              >
+                <p
+                  className="thread-in max-w-[80%] self-end rounded-xl bg-line-soft px-3 py-2 text-[13px] leading-[1.45] text-ink"
+                  style={{ "--agent": member.color } as CSSProperties}
+                >
+                  {landed.wake ? (
+                    <span
+                      className="whitespace-nowrap font-medium"
+                      style={{ color: member.color }}
                     >
-                      <span className="font-mono text-[11px] text-muted">
-                        You
-                      </span>
-                      <p className="inline-block rounded-xl rounded-br-[4px] bg-ink px-3 py-2 text-left text-sm leading-[1.4] text-white">
-                        {shownWake ? (
-                          <span
-                            className="whitespace-nowrap font-medium"
-                            style={{
-                              color: `color-mix(in srgb, ${m.color} 55%, white)`,
-                            }}
-                          >
-                            {shownWake}
-                          </span>
-                        ) : null}
-                        {shownRest}
-                        {item.said < item.text.length ? (
-                          <span className="crew-cursor ml-px inline-block h-[1em] w-[2px] translate-y-[2px] bg-white" />
-                        ) : null}
-                      </p>
-                    </li>
-                  );
-                }
-                return (
-                  <li
-                    key={`agent:${item.at}`}
-                    className={`grid max-w-[78%] grid-cols-[22px_1fr] gap-x-2.5 gap-y-1 ${fresh ? "thread-in" : ""}`}
-                    style={tint}
-                  >
-                    <CrewFace
-                      id={item.agent}
-                      size={22}
-                      className="pixel row-span-2 mt-4"
-                    />
-                    <span className="font-mono text-[11px] text-muted">
-                      {m.name}
+                      {landed.wake}
                     </span>
-                    <p className="inline-block justify-self-start rounded-xl rounded-bl-[4px] border border-line bg-card px-3 py-2 text-sm leading-[1.4] text-ink">
-                      {item.text}
-                      {item.playing ? (
+                  ) : null}
+                  {landed.text.slice(landed.wake.length)}
+                </p>
+                {thinking ? (
+                  <Row icon={<BrainIcon size={13} />} className="thread-in">
+                    Thinking
+                  </Row>
+                ) : null}
+                {toolRow ? (
+                  <Row icon={<WrenchIcon size={13} />} className="thread-in">
+                    <span className="font-mono text-[11.5px]">
+                      {TOOL_ROWS[id]}
+                    </span>
+                  </Row>
+                ) : null}
+                {landed.replies.map((r) => (
+                  <div key={r.at} className="thread-in grid gap-2.5">
+                    <p className="text-[13px] leading-[1.5] text-ink">
+                      {r.text}
+                      {r.playing ? (
                         <span
                           className="voice-meter is-playing ml-2 inline-flex h-[10px] items-end gap-[2px] align-middle"
                           aria-hidden="true"
@@ -232,7 +229,7 @@ export function AppWindow({ state }: { state: HeroState }) {
                               className="block h-[6px] w-[2px] rounded-sm"
                               style={
                                 {
-                                  background: m.color,
+                                  background: member.color,
                                   "--n": n,
                                 } as CSSProperties
                               }
@@ -240,42 +237,103 @@ export function AppWindow({ state }: { state: HeroState }) {
                           ))}
                         </span>
                       ) : null}
-                      {item.ask && !item.playing ? (
-                        <span className="mt-2 flex gap-1.5">
-                          <span className="rounded-md bg-ink px-2 py-0.5 text-[11px] font-medium text-white">
-                            Yes
-                          </span>
-                          <span className="rounded-md border border-line px-2 py-0.5 text-[11px] font-medium text-ink-2">
-                            Not yet
-                          </span>
-                        </span>
-                      ) : null}
                     </p>
-                  </li>
-                );
-              })}
-            </ol>
+                    {r.permission && !r.permission.allowedAt ? (
+                      <div className="rounded-lg border border-[#e6c46a] bg-[#fffbeb] p-3">
+                        <div className="flex items-center gap-2 text-[13px] font-medium">
+                          <ShieldIcon size={14} className="text-[#b58a1e]" />
+                          {member.name} wants to use {r.permission.tool}
+                        </div>
+                        <div className="mt-1.5 rounded-md border border-line bg-card px-2.5 py-1.5 font-mono text-[11.5px] text-ink-2">
+                          {r.permission.command}
+                        </div>
+                        <p className="mt-1.5 text-[11px] text-muted">
+                          This command requires approval
+                        </p>
+                        <div className="mt-2.5 flex flex-wrap gap-1.5">
+                          <span className="rounded-md bg-ink px-2.5 py-1 text-[11.5px] font-medium text-white">
+                            Allow once
+                          </span>
+                          <span className="rounded-md border border-line bg-card px-2.5 py-1 text-[11.5px] font-medium text-ink-2">
+                            Allow for this session
+                          </span>
+                          <span className="rounded-md px-2.5 py-1 text-[11.5px] font-medium text-ink-2">
+                            Decline
+                          </span>
+                        </div>
+                      </div>
+                    ) : null}
+                    {r.permission && r.permission.allowedAt ? (
+                      <Row
+                        icon={<WrenchIcon size={13} />}
+                        className="thread-in"
+                      >
+                        <span className="font-mono text-[11.5px]">
+                          {r.permission.tool}
+                        </span>
+                        <span className="truncate font-mono text-[11.5px] text-muted">
+                          {r.permission.command}
+                        </span>
+                        <span className="ml-auto text-[11px] text-muted">
+                          allowed once
+                        </span>
+                      </Row>
+                    ) : null}
+                  </div>
+                ))}
+                {landed.status === "done" ? (
+                  <Row icon={<TerminalIcon size={13} />} className="thread-in">
+                    <span className="text-muted">
+                      Turn complete · {TURNS[id].turns} turns · {TURNS[id].cost}
+                    </span>
+                  </Row>
+                ) : null}
+              </div>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center gap-1 px-6 text-center">
+                <p className="text-[13px] text-ink-2">
+                  Nothing yet. Ask {member.name} to do something.
+                </p>
+                <p className="text-[11px] text-muted">
+                  It runs in <span className="font-mono">{folders[id]}</span>
+                </p>
+              </div>
+            )}
           </div>
 
-          <div className="m-3 mt-2 flex h-11 items-center gap-2.5 rounded-[10px] border border-line bg-ground px-3">
+          <div className="m-3 mt-2 flex h-11 items-center gap-2.5 rounded-[10px] border border-line bg-card px-3">
+            <PaperclipIcon size={14} className="text-muted" />
             <span
-              className="inline-flex h-[14px] items-center gap-[3px]"
-              aria-hidden="true"
+              className={`flex-1 truncate text-[13px] ${line ? "text-ink" : "text-muted"}`}
             >
-              {[0, 1, 2, 3, 4].map((n) => (
-                <i
-                  key={n}
-                  className={`block w-[2px] rounded-sm transition-[height,background-color] duration-300 ${mic ? "bg-bit" : "bg-line"}`}
-                  style={{ height: mic ? `${6 + ((n * 7) % 9)}px` : "6px" }}
-                />
-              ))}
+              {line ? (
+                <>
+                  {line.said >= line.wake.length ? (
+                    <span
+                      className="whitespace-nowrap font-medium"
+                      style={{ color: crewById[line.agent].color }}
+                    >
+                      {line.wake}
+                    </span>
+                  ) : (
+                    line.text.slice(0, line.said)
+                  )}
+                  {line.said >= line.wake.length
+                    ? line.text.slice(line.wake.length, line.said)
+                    : null}
+                  <span className="crew-cursor ml-px inline-block h-[1em] w-[2px] translate-y-[2px] bg-ink" />
+                </>
+              ) : (
+                `Ask ${member.name} to do something…`
+              )}
             </span>
-            <span
-              className={`flex-1 truncate text-[13px] ${mic ? "text-ink" : "text-muted"}`}
-            >
-              {mic ? mic.text : "Say hey and a name, or hold the hotkey"}
+            <MicIcon
+              size={15}
+              className={`transition-colors duration-300 ${line ? "text-bit" : "text-muted"}`}
+            />
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-line-soft text-ink-2">
+              <ArrowUpIcon size={13} />
             </span>
-            <kbd className="hidden text-muted sm:inline">Ctrl Space</kbd>
           </div>
         </section>
       </div>

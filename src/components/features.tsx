@@ -22,13 +22,13 @@ function VoicePanel({ color }: { color: string }) {
       ].map((l, i) => (
         <p
           key={l.who}
-          className="inline-flex items-center gap-2 justify-self-start rounded-xl rounded-bl-[4px] bg-ink px-3.5 py-2 text-[14px] text-white"
+          className="inline-flex items-center gap-2 justify-self-start rounded-xl bg-line-soft px-3.5 py-2 text-[14px] text-ink"
           style={{ marginLeft: i * 18 }}
         >
           <span
             className="whitespace-nowrap font-medium"
             style={{
-              color: `color-mix(in srgb, ${[crewById.bit, crewById.loop, crewById.clawd][i].color} 55%, white)`,
+              color: [crewById.bit, crewById.loop, crewById.clawd][i].color,
             }}
           >
             {l.who}

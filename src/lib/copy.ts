@@ -29,10 +29,9 @@ export const copy = {
     download: "Download for Windows",
     source: "View the source",
     under: "macOS soon. Nothing leaves your machine.",
-    caption:
-      "An illustration of the app, drawn for this page. Real captures replace it.",
+    caption: "An illustration of the app, drawn for this page.",
     narration:
-      "Example: you say hey Bit, run the tests. Bit starts working in its own folder. You ask Block about the CI pipeline while Bit works; Block answers, asks whether to deploy, and you say yes. Bit reports back when the tests pass.",
+      "Example: you say hey Bit, run the tests. Bit starts working in its own folder. You ask Block about the CI pipeline while Bit works; Block checks, then asks permission to run the deploy command, and you allow it once. Bit reports that the tests passed. You ask Terminal what Block changed, and it asks whether you want the diff. Block reports that staging is live.",
   },
 
   how: {

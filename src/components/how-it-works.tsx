@@ -55,10 +55,10 @@ function SayDemo() {
   const block = crewById.block;
   return (
     <div className="flex flex-col gap-3">
-      <p className="flex items-center gap-2.5 self-end rounded-xl rounded-br-[4px] bg-ink px-3.5 py-2.5 text-[15px] text-white">
+      <p className="flex items-center gap-2.5 self-end rounded-xl bg-line-soft px-3.5 py-2.5 text-[15px] text-ink">
         <span
           className="whitespace-nowrap font-medium"
-          style={{ color: `color-mix(in srgb, ${block.color} 55%, white)` }}
+          style={{ color: block.color }}
         >
           hey Block,
         </span>
