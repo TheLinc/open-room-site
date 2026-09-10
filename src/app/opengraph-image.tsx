@@ -58,9 +58,11 @@ function Face({ id, cell }: { id: (typeof crew)[number]["id"]; cell: number }) {
 
 export default async function Image() {
   const [font, logo] = await Promise.all([geist, mark]);
-  // Two set lines, the way the page breaks it at desktop width.
+  // Two set lines, the way the page breaks it at desktop width; the verb
+  // sits in the pill with the bars after it.
   const [first, second] = copy.hero.headline.split(" without ");
-  const bars = [0.42, 0.7, 1, 0.8, 0.55, 0.9, 0.5];
+  const [verb, ...restOfFirst] = first.split(" ");
+  const bars = [0.5, 0.8, 1, 0.7, 0.45];
 
   return new ImageResponse(
     <div
@@ -115,29 +117,32 @@ export default async function Image() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                gap: 5,
-                height: 52,
-                padding: "0 18px",
-                marginRight: 18,
-                marginTop: 4,
+                gap: 10,
+                height: 64,
+                padding: "0 18px 0 14px",
+                marginRight: 16,
+                marginTop: 2,
                 borderRadius: 999,
                 background: ink,
+                color: "#ffffff",
               }}
             >
-              {bars.map((h, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: 4,
-                    height: Math.round(22 * h),
-                    borderRadius: 2,
-                    background: teal,
-                  }}
-                />
-              ))}
+              <div style={{ display: "flex", marginTop: 4 }}>{verb}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                {bars.map((h, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: 4,
+                      height: Math.round(20 * h),
+                      borderRadius: 2,
+                      background: teal,
+                    }}
+                  />
+                ))}
+              </div>
             </div>
-            <div style={{ display: "flex" }}>{first}</div>
+            <div style={{ display: "flex" }}>{restOfFirst.join(" ")}</div>
           </div>
           <div style={{ display: "flex" }}>{`without ${second}`}</div>
         </div>

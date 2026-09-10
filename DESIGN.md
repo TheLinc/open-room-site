@@ -222,7 +222,7 @@ The five agent hues. Each belongs to one character and is used only where that c
 
 ### Hierarchy
 
-- **Display** (500, 40px / 52px at sm / 64px at md, line-height 1.02, tracking -0.035em): the hero headline only, balanced, at most 21ch, with the verb replaced by the voice pill.
+- **Display** (500, 40px / 52px at sm / 64px at md, line-height 1.02, tracking -0.035em): the hero headline only, balanced, at most 21ch, with the verb set in white inside the voice pill, level bars after it.
 - **Headline** (500, 34px / 44px at md, line-height 1.08, tracking -0.03em): every section h2. Left-aligned, at most 40 to 44ch.
 - **Title** (500, 19 to 22px, line-height 1.2, tracking -0.01 to -0.02em): step and feature titles, FAQ questions at 17px.
 - **Lead** (400, 17px / 19px at md in the hero, line-height 1.5, `{colors.muted}`): the paragraph under each heading, at most 52ch.
