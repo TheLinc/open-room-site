@@ -225,7 +225,7 @@ The five agent hues. Each belongs to one character and is used only where that c
 - **Display** (500, 40px / 52px at sm / 64px at md, line-height 1.02, tracking -0.035em): the hero headline only, balanced, at most 21ch, with the verb set in white inside the voice pill, level bars after it.
 - **Headline** (500, 34px / 44px at md, line-height 1.08, tracking -0.03em): every section h2. Left-aligned, at most 40 to 44ch.
 - **Title** (500, 19 to 22px, line-height 1.2, tracking -0.01 to -0.02em): step and feature titles, FAQ questions at 17px.
-- **Lead** (400, 17px / 19px at md in the hero, line-height 1.5, `{colors.muted}`): the paragraph under each heading, at most 52ch.
+- **Lead** (400, 17px / 19px at md in the hero, line-height 1.5, `{colors.muted}`): the paragraph under each heading, at most 52ch. The hero's lead and under-line are the exception and use `{colors.ink-2}`: they sit on the pixel field, and muted on the field's #d4d4d8 squares measures 3.27:1, under the 4.5:1 floor, where ink-2 measures 7.07:1. The field also thins to 35 percent behind the copy block.
 - **Body** (400, 15px, line-height 1.55, `{colors.ink-2}`): explanatory copy, at most 46 to 60ch. The open-source and safety paragraphs run at 17px.
 - **Small** (400, 13px, `{colors.muted}`): details, section sources, footer text, panel metadata, header chip text.
 - **Label** (400, Geist Mono, 10.5 to 13px, `{colors.muted}`): folder paths, `kbd` keys, status words ("working", "listening"), the "You" and agent names above bubbles, the hero under-line, and the illustration captions at 12px.

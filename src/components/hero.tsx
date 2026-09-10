@@ -32,14 +32,17 @@ export function Hero({ download }: { download: string }) {
           />{" "}
           {rest.join(" ")}
         </h1>
-        <p className="mt-3 max-w-[52ch] text-[17px] leading-[1.5] text-muted md:text-[19px]">
+        {/* ink-2 rather than the lead's usual muted: this is the one lead that
+            sits on the pixel field, and muted on the field's #d4d4d8 squares is
+            2.9:1, under the 4.5:1 floor. ink-2 is 6.7:1 there. */}
+        <p className="mt-3 max-w-[52ch] text-[17px] leading-[1.5] text-ink-2 md:text-[19px]">
           {copy.hero.lead}
         </p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
           <DownloadButton size="lg" href={download} />
           <SourceButton />
         </div>
-        <p className="mt-3 font-mono text-[13px] text-muted">
+        <p className="mt-3 font-mono text-[13px] text-ink-2">
           {copy.hero.under}
         </p>
       </div>

@@ -37,9 +37,20 @@ export function HeroField({ still }: { still: boolean }) {
     <div
       className="h-full w-full"
       style={{
-        maskImage: "linear-gradient(to bottom, black 55%, transparent 96%)",
-        WebkitMaskImage:
+        // Two masks multiply: the bottom fade that ends the field before the
+        // window, and a soft clearing behind the copy block so the lead and
+        // under-line sit on thinner lattice. The headline's pill still
+        // travels through the field; it just does not fight the paragraph.
+        maskImage: [
           "linear-gradient(to bottom, black 55%, transparent 96%)",
+          "radial-gradient(ellipse 34% 26% at 50% 34%, rgb(0 0 0 / 0.35) 0%, rgb(0 0 0 / 0.35) 55%, black 100%)",
+        ].join(", "),
+        WebkitMaskImage: [
+          "linear-gradient(to bottom, black 55%, transparent 96%)",
+          "radial-gradient(ellipse 34% 26% at 50% 34%, rgb(0 0 0 / 0.35) 0%, rgb(0 0 0 / 0.35) 55%, black 100%)",
+        ].join(", "),
+        maskComposite: "intersect",
+        WebkitMaskComposite: "source-in",
         animation: "field-in 900ms ease-out both",
       }}
     >
