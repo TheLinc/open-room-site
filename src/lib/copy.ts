@@ -6,8 +6,7 @@
 
 export const links = {
   github: "https://github.com/TheLinc/open-room",
-  releases: "https://github.com/TheLinc/open-room/releases/latest",
-  changelog: "https://github.com/TheLinc/open-room/releases",
+  releases: "https://github.com/TheLinc/open-room/releases",
   site: "https://openroom.dev",
 } as const;
 
@@ -180,6 +179,5 @@ export const copy = {
     licence: "Open Room is free and MIT licensed.",
     github: "GitHub",
     releases: "Releases",
-    changelog: "Changelog",
   },
 } as const;

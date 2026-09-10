@@ -28,9 +28,9 @@ describe("copy", () => {
     }
   });
 
-  test("the download goes through the stable releases redirect", () => {
+  test("the download fallback is the releases list, which never 404s", () => {
     expect(links.releases).toBe(
-      "https://github.com/TheLinc/open-room/releases/latest",
+      "https://github.com/TheLinc/open-room/releases",
     );
   });
 

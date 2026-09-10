@@ -5,7 +5,13 @@ import { DownloadButton } from "@/components/download-button";
 import { GitHubIcon, StarIcon } from "@/components/icons";
 import logo from "@/assets/brand/logo.png";
 
-export function SiteHeader({ stars }: { stars: number | null }) {
+export function SiteHeader({
+  stars,
+  download,
+}: {
+  stars: number | null;
+  download: string;
+}) {
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-ground/85 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-[1120px] items-center justify-between px-6">
@@ -56,7 +62,7 @@ export function SiteHeader({ stars }: { stars: number | null }) {
               "GitHub"
             )}
           </a>
-          <DownloadButton />
+          <DownloadButton href={download} />
         </nav>
       </div>
     </header>

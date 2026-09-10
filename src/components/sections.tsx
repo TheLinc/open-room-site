@@ -90,7 +90,7 @@ export function Safety() {
   );
 }
 
-export function GetStarted() {
+export function GetStarted({ download }: { download: string }) {
   return (
     <section className="mx-auto max-w-[1120px] px-6 pt-32 md:pt-40">
       <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:gap-16">
@@ -99,7 +99,7 @@ export function GetStarted() {
             {copy.start.title}
           </h2>
           <div className="mt-8">
-            <DownloadButton size="lg" />
+            <DownloadButton size="lg" href={download} />
           </div>
           <p className="mt-4 text-[14px] text-muted">{copy.start.platforms}</p>
         </Reveal>
@@ -152,9 +152,6 @@ export function Footer() {
           </a>
           <a href={links.releases} className="hover:text-ink">
             {copy.footer.releases}
-          </a>
-          <a href={links.changelog} className="hover:text-ink">
-            {copy.footer.changelog}
           </a>
         </nav>
       </div>

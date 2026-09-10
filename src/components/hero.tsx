@@ -13,7 +13,7 @@ import { useTimeline } from "@/lib/use-timeline";
 // The first viewport: centred copy over the pixel field, then the app window
 // with the crew perched on its top edge. One clock drives the pill, the
 // desks and the thread; the field behind them is its own quiet thing.
-export function Hero() {
+export function Hero({ download }: { download: string }) {
   const { state, reduced } = useTimeline(heroStateAt, heroStill);
   const [verb, ...rest] = copy.hero.headline.split(" ");
 
@@ -36,7 +36,7 @@ export function Hero() {
           {copy.hero.lead}
         </p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
-          <DownloadButton size="lg" />
+          <DownloadButton size="lg" href={download} />
           <SourceButton />
         </div>
         <p className="mt-3 font-mono text-[13px] text-muted">

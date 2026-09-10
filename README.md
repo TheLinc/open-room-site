@@ -27,23 +27,11 @@ Every push to `master` deploys production. Every other branch and pull request g
 
 ## Download links
 
-Link installers through GitHub's stable redirect so the page never needs updating for a release:
+The download button asks the GitHub API for the newest published release at render time and links straight to its Windows installer (`open-room-<version>-setup.exe`, named by `electron-builder.yml` in the app repo). The answer is cached for an hour, and when GitHub can't be reached the button falls back to the releases list. GitHub's own `releases/latest` redirect is not used because it skips pre-releases, which is every 0.x release.
 
-```
-https://github.com/TheLinc/open-room/releases/latest
-https://github.com/TheLinc/open-room/releases/latest/download/<asset name>
-```
+## Art
 
-The asset names come from `electron-builder.yml` in the app repo. Check them against the latest release before hard-coding one.
-
-## Assets
-
-The room on the page comes from generated masters under `assets/higgsfield/keyframes/`. Two scripts turn them into web files, and both the masters and the outputs are committed, so the scripts only need to run again when a master changes:
-
-- `npm run build:frames` crops the stills to a square around the room and writes `src/assets/room/*.webp` and `og-room.png`. Needs nothing beyond `npm install`.
-- `npm run build:video` encodes the hero loop to `public/room/loop.webm` and `loop.mp4` and writes `src/assets/room/loop.json`. Needs `ffmpeg` and `ffprobe` on PATH.
-
-Prompts, job ids and the art direction are in `assets/higgsfield/keyframes/README.md` and `docs/superpowers/specs/2026-09-03-hero-art-direction-design.md`.
+The five mascots are hand-traced pixel sprites in `src/lib/crew-sprites.ts` and `src/lib/crew-faces.ts`. The desk-row sprites were traced by `scripts/trace-row.mjs` from the generated still kept under `assets/higgsfield/keyframes/row/`, next to the character reference; see the README there. The social preview image is drawn from the same sprites and copy by `src/app/opengraph-image.tsx`, with Geist Medium from `src/assets/fonts/`.
 
 ## Waitlist
 

@@ -44,16 +44,12 @@ next-env.d.ts
 # subagent-driven-development scratch (ledger, briefs, review packages)
 .superpowers/
 
-# generated art: keep the approved masters, the clip and the README; ignore drafts, tests, rejects and analysis output
+# generated art: keep the traced row and its references, ignore drafts
 assets/higgsfield/keyframes/base/
 assets/higgsfield/keyframes/react/
-assets/higgsfield/keyframes/iso-test/*.png
-assets/higgsfield/keyframes/iso-test/pose/called*
-assets/higgsfield/keyframes/hero/*.png
-assets/higgsfield/keyframes/hero/video/frames/
-assets/higgsfield/keyframes/hero/video/full/
-assets/higgsfield/keyframes/hero/video/*.png
-assets/higgsfield/keyframes/sections/S4-rejected*
+assets/higgsfield/keyframes/hero/
+assets/higgsfield/keyframes/iso-test/
+assets/higgsfield/keyframes/sections/
 
 # agent tooling installed per machine (skills, impeccable binaries, browser scratch)
 .agents/
