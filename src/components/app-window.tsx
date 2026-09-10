@@ -104,7 +104,7 @@ export function AppWindow({ state }: { state: HeroState }) {
   }, [id, latestAt, thinking, toolRow]);
 
   return (
-    <div className="overflow-hidden rounded-panel border border-line bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_30px_60px_-30px_rgb(0_0_0/0.25)]">
+    <div className="overflow-hidden rounded-panel border border-line bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_56px_-28px_rgb(0_0_0/0.14)]">
       <div className="flex h-9 items-center gap-2 border-b border-line px-3 text-[12px] text-ink">
         <Image
           src={logo}

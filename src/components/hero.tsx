@@ -18,7 +18,7 @@ export function Hero({ download }: { download: string }) {
   const [verb, ...rest] = copy.hero.headline.split(" ");
 
   return (
-    <section id="top" className="relative overflow-hidden pt-8 md:pt-8">
+    <section id="top" className="relative overflow-hidden pb-16 pt-8 md:pt-8">
       <div className="absolute inset-x-0 top-0 h-[680px]" aria-hidden="true">
         <HeroField still={reduced} />
       </div>
@@ -63,9 +63,6 @@ export function Hero({ download }: { download: string }) {
             <AppWindow state={state} />
           </div>
         </div>
-        <p className="mt-4 text-center font-mono text-xs text-muted">
-          {copy.hero.caption}
-        </p>
       </div>
     </section>
   );
