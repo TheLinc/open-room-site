@@ -15,7 +15,7 @@ export const VoicePill = forwardRef<
   return (
     <span
       ref={ref}
-      className={`voice-pill relative top-[-0.04em] mr-[0.04em] inline-flex h-[0.86em] items-center gap-[0.13em] rounded-full bg-ink pl-[0.2em] pr-[0.24em] align-middle text-white ${speaking ? "is-speaking" : ""}`}
+      className={`voice-pill relative top-[-0.05em] mr-[0.04em] inline-flex h-[1.02em] items-center gap-[0.17em] rounded-full bg-ink pl-[0.34em] pr-[0.34em] align-middle text-white ${speaking ? "is-speaking" : ""}`}
       style={color ? ({ "--voice": color } as CSSProperties) : undefined}
     >
       <span className="leading-none">{word}</span>
