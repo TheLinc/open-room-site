@@ -332,7 +332,7 @@ Pixel Blast from React Bits (`src/components/pixel-blast.tsx`, MIT, Three.js), m
 - **Do** set every heading in Geist at weight 500 with negative tracking and no label above it.
 - **Do** keep character motion in `steps(1)` and interface motion on `cubic-bezier(0.16, 1, 0.3, 1)`; the rise entrance is 640ms from 14px below, opacity from 0, and every element renders visible by default so reduced motion and no-JavaScript show the finished state.
 - **Do** draw icons in the page's own stroke set (`icons.tsx`) and put pixel art only on the crew faces, the desk sprites, the voice pill and the hero field.
-- **Do** caption product imagery in 12px mono `{colors.muted}`: the hero window as an illustration, the section captures as captures from the app. Captures are cut to the element they show, at 2x, from the Windows build in its light theme, and sit in a white hairline panel.
+- **Do** caption product imagery in 12px mono `{colors.muted}` as drawn from the app. Every panel below the hero is built from the shared app parts (sheet, field, input, select, switch, thread row) so it matches the app's editor and settings dialogs; real captures live in `assets/app-reference/` as the reference, never on the page, because element crops carry the app's white surface onto the zinc ground.
 
 ### Don't:
 

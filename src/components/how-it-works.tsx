@@ -1,43 +1,91 @@
 import type { CSSProperties } from "react";
+import { Button, Field, Input, Sheet, ThreadRow } from "@/components/app-parts";
+import {
+  ArrowUpIcon,
+  FolderIcon,
+  LoaderIcon,
+  MicIcon,
+  PaperclipIcon,
+  TerminalIcon,
+} from "@/components/icons";
 import { Reveal } from "@/components/reveal";
-import { Shot } from "@/components/shot";
-import { crewById } from "@/lib/crew";
+import { crew, crewById } from "@/lib/crew";
 import { copy } from "@/lib/copy";
-import editorName from "@/assets/app/editor-name.png";
-import editorColourFolder from "@/assets/app/editor-colour-folder.png";
-import composer from "@/assets/app/composer.png";
-import sidebar from "@/assets/app/sidebar.png";
-import reply from "@/assets/app/reply.png";
 
-// Three moves, each shown as the thing itself, captured from the app: the
-// agent sheet you fill in, the line you type or say, the reply that comes
-// back with a question. Different objects, not three copies of one card.
+// Three moves, each shown as the thing itself, drawn from the app: the
+// editor sheet you fill in, the composer and the agent list, the reply that
+// comes back with a question. Different objects, not three copies of one card.
+
+// The editor's colour swatches, in the app's own palette.
+const swatches = [
+  "#f59e0b",
+  "#10b981",
+  "#0ea5e9",
+  "#8b5cf6",
+  "#f43f5e",
+  "#84cc16",
+  "#06b6d4",
+  "#f97316",
+];
 
 function NameDemo() {
   return (
-    <div className="grid gap-3 rounded-panel border border-line bg-card p-3">
-      <Shot
-        src={editorName}
-        alt="The agent editor's Name field, filled in with Terminal"
-        frame={false}
-      />
-      <Shot
-        src={editorColourFolder}
-        alt="The editor's colour swatches with green chosen, and the workspace folder field"
-        frame={false}
-      />
-    </div>
+    <Sheet>
+      <Field label="Name">
+        <Input>Terminal</Input>
+      </Field>
+      <Field
+        label="Colour"
+        hint="Identifies the agent in the sidebar and while it is listening."
+      >
+        <span className="flex items-center gap-2 py-0.5">
+          {swatches.map((c, i) => (
+            <i
+              key={c}
+              className={`h-[18px] w-[18px] rounded-full ${i === 1 ? "ring-2 ring-ink ring-offset-2 ring-offset-card" : ""}`}
+              style={{ background: c }}
+            />
+          ))}
+        </span>
+      </Field>
+      <Field label="Workspace folder">
+        <span className="flex gap-2">
+          <Input mono className="flex-1">
+            C:\work\infra
+          </Input>
+          <Button>
+            <FolderIcon size={13} />
+            Browse
+          </Button>
+        </span>
+      </Field>
+      <span className="sr-only">
+        Terminal set up with a colour, a voice and a folder
+      </span>
+    </Sheet>
   );
 }
 
 function SayDemo() {
+  const block = crewById.block;
   return (
     <div className="flex flex-col gap-3">
-      <Shot
-        src={composer}
-        alt="The app's composer with the line hey Block, check the CI pipeline typed in, a microphone button beside it"
-        frame={false}
-      />
+      <div className="flex h-11 items-center gap-2.5 rounded-[14px] border border-line bg-card px-3 text-[13px] text-ink">
+        <PaperclipIcon size={14} className="text-muted" />
+        <span className="flex-1 truncate">
+          <span
+            className="whitespace-nowrap font-medium"
+            style={{ color: block.color }}
+          >
+            hey Block,
+          </span>{" "}
+          check the CI pipeline
+        </span>
+        <MicIcon size={15} className="text-muted" />
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-white">
+          <ArrowUpIcon size={13} />
+        </span>
+      </div>
       <div className="flex flex-wrap items-center gap-2 self-end text-[13px] text-muted">
         or hold
         <kbd>Ctrl</kbd>
@@ -45,24 +93,46 @@ function SayDemo() {
         <kbd>Space</kbd>
         and say it
       </div>
-      <Shot
-        src={sidebar}
-        alt="The agent list with Block selected and a spinner beside its name while it works"
-        className="mt-1 max-w-[230px]"
-        sizes="230px"
-      />
+      <ul className="mt-1 grid w-[min(100%,230px)] gap-0.5 rounded-panel border border-line bg-card p-2">
+        {crew.map((m) => {
+          const on = m.id === "block";
+          return (
+            <li
+              key={m.id}
+              className={`grid h-8 grid-cols-[auto_1fr_auto] items-center gap-2.5 rounded-lg px-2 text-[13px] ${on ? "bg-line-soft text-ink" : "text-ink-2"}`}
+            >
+              <i
+                className="h-[9px] w-[9px] rounded-full"
+                style={{ background: m.color }}
+              />
+              <span>{m.name}</span>
+              {on ? (
+                <LoaderIcon
+                  size={12}
+                  className="animate-spin text-muted motion-reduce:animate-none"
+                />
+              ) : null}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
 
 function BackDemo() {
-  const block = crewById.block;
+  const terminal = crewById.terminal;
   return (
     <div className="flex flex-col gap-3">
-      <Shot
-        src={reply}
-        alt="Block's reply: top-level folders build, docs, resources, scripts, src. Which one should I look into next? Then a row reading turn complete, 3 turns, $0.0422"
-      />
+      <Sheet className="gap-3 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_30px_-16px_rgb(0_0_0/0.25)]">
+        <p className="text-[13px] leading-[1.5] text-ink">
+          Two files changed in{" "}
+          <span className="font-mono text-[12px]">ci/</span>. Want the diff?
+        </p>
+        <ThreadRow icon={<TerminalIcon size={13} />}>
+          <span className="text-muted">Turn complete · 2 turns · $0.0186</span>
+        </ThreadRow>
+      </Sheet>
       <p className="flex items-center gap-2.5 self-start pl-1 text-[13px] text-muted">
         <span
           className="voice-meter is-playing inline-flex h-[12px] items-end gap-[2px]"
@@ -72,7 +142,7 @@ function BackDemo() {
             <i
               key={n}
               className="block h-[7px] w-[2px] rounded-sm"
-              style={{ background: block.color, "--n": n } as CSSProperties}
+              style={{ background: terminal.color, "--n": n } as CSSProperties}
             />
           ))}
         </span>

@@ -33,7 +33,7 @@ The download button asks the GitHub API for the newest published release at rend
 
 The five mascots are hand-traced pixel sprites in `src/lib/crew-sprites.ts` and `src/lib/crew-faces.ts`. The desk-row sprites were traced by `scripts/trace-row.mjs` from the generated still kept under `assets/higgsfield/keyframes/row/`, next to the character reference; see the README there. The social preview image is drawn from the same sprites and copy by `src/app/opengraph-image.tsx`, with Geist Medium from `src/assets/fonts/`.
 
-The hero window is drawn in code on purpose, so a change to the app does not force a site change. The how-it-works and feature panels are real captures in `src/assets/app/`: element crops at 2x from the app running in its light theme, taken over the Chrome DevTools Protocol against `electron-vite dev --remoteDebuggingPort <port>` with `OPEN_ROOM_HOME` pointed at a throwaway home holding the five demo agents. Retake them when the app's editor, settings or thread change shape.
+Every product image is drawn in code, on purpose: a change to the app does not force a site change, and a drawing sits on the page's own surface where a cropped screenshot would carry the app's white background with it. The panels below the hero are built from `src/components/app-parts.tsx`, which draws the app's fields, selects and switches small. Their reference is the set of real captures in `assets/app-reference/`: element crops at 2x from the app running in its light theme, taken over the Chrome DevTools Protocol against `electron-vite dev --remoteDebuggingPort <port>` with `OPEN_ROOM_HOME` pointed at a throwaway home holding the five demo agents. Retake them when the app's editor, settings or thread change shape, then update the drawings.
 
 ## Waitlist
 
