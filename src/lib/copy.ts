@@ -165,13 +165,6 @@ export const copy = {
     ],
   },
 
-  /** The waitlist is off the page; its server action still needs these. */
-  form: {
-    invalid: "That doesn't look like an email address.",
-    failed: "Something went wrong. Try again in a moment.",
-    done: "You're on the list.",
-  },
-
   footer: {
     licence: "Open Room is free and MIT licensed.",
     github: "GitHub",

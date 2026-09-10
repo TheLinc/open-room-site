@@ -44,7 +44,7 @@ Real alternative: more terminal windows, checked by hand.
 - Free. MIT licence. No API keys, no telemetry, no server other than Anthropic's. Speech-to-text and text-to-speech run locally.
 - Platforms: Windows first. macOS is configured but had not yet been run on a Mac at the time of the app README. Linux status unconfirmed. [OPEN: confirm which installers are on the latest release before naming platforms on the page.]
 - Primary action, confirmed 2026-09-08: Download, linked through GitHub's stable redirect (https://github.com/TheLinc/open-room/releases/latest, and .../releases/latest/download/<asset>). Asset names come from electron-builder.yml in the app repo and must be checked against the latest release before hard-coding.
-- The waitlist email signup (Resend contacts, src/app/actions.ts and src/lib/waitlist.ts) stays in the codebase. It is no longer the primary action; whether it appears on the page at all is open.
+- There is no waitlist. The download is the action; the earlier Resend signup was removed once the app had a public release.
 - Site stack, existing: Next.js 16 App Router, TypeScript, Tailwind CSS v4, Vercel. Node 22.
 - Terminology: agent (never assistant or copilot), name, room, talk, by voice or by typing, get on with something else, finds you, your own login, stays on your machine. Avoid: orchestrate, seamless, supercharge, AI-powered, revolutionary, workflow (name the actual task instead).
 - Copy in src/lib/copy.ts still carries the coming-soon framing ("Tell me when it's ready") and needs rewriting for the product page.
