@@ -1,119 +1,68 @@
 import type { CSSProperties } from "react";
-import { CrewFace } from "@/components/crew-face";
-import { BellIcon } from "@/components/icons";
 import { Reveal } from "@/components/reveal";
-import { crew, crewById } from "@/lib/crew";
+import { Shot } from "@/components/shot";
+import { crewById } from "@/lib/crew";
 import { copy } from "@/lib/copy";
+import editorName from "@/assets/app/editor-name.png";
+import editorColourFolder from "@/assets/app/editor-colour-folder.png";
+import composer from "@/assets/app/composer.png";
+import sidebar from "@/assets/app/sidebar.png";
+import reply from "@/assets/app/reply.png";
 
-// Three moves, each shown as the thing itself: the agent sheet you fill in,
-// the line you say, the reply that finds you. Different objects, not three
-// copies of one card.
+// Three moves, each shown as the thing itself, captured from the app: the
+// agent sheet you fill in, the line you type or say, the reply that comes
+// back with a question. Different objects, not three copies of one card.
 
 function NameDemo() {
-  const bit = crewById.bit;
   return (
-    <div className="rounded-panel border border-line bg-card p-4">
-      <div className="flex items-center gap-3">
-        <CrewFace id="bit" size={36} className="pixel" />
-        <div className="grid flex-1 gap-1">
-          <div className="h-8 rounded-lg border border-line bg-ground px-3 text-[13px] leading-8 text-ink">
-            Bit
-          </div>
-        </div>
-      </div>
-      <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-[13px]">
-        <dt className="text-muted">Colour</dt>
-        <dd className="flex items-center gap-1.5">
-          {crew.map((m) => (
-            <i
-              key={m.id}
-              className={`h-4 w-4 rounded-full ${m.id === "bit" ? "ring-2 ring-ink ring-offset-2 ring-offset-card" : ""}`}
-              style={{ background: m.color }}
-            />
-          ))}
-        </dd>
-        <dt className="text-muted">Voice</dt>
-        <dd className="text-ink">Ava</dd>
-        <dt className="text-muted">Folder</dt>
-        <dd className="font-mono text-[12px] text-ink">~/work/web</dd>
-      </dl>
-      <div className="mt-3 rounded-lg border border-line bg-ground p-3 font-mono text-[11.5px] leading-[1.6] text-ink-2">
-        <span className="text-muted"># AGENT.md</span>
-        <br />
-        You run the web app tests and
-        <br />
-        keep the build green.
-      </div>
-      <span className="sr-only">
-        {bit.name} set up with a colour, a voice and a folder
-      </span>
+    <div className="grid gap-3 rounded-panel border border-line bg-card p-3">
+      <Shot
+        src={editorName}
+        alt="The agent editor's Name field, filled in with Terminal"
+        frame={false}
+      />
+      <Shot
+        src={editorColourFolder}
+        alt="The editor's colour swatches with green chosen, and the workspace folder field"
+        frame={false}
+      />
     </div>
   );
 }
 
 function SayDemo() {
-  const block = crewById.block;
   return (
     <div className="flex flex-col gap-3">
-      <p className="flex items-center gap-2.5 self-end rounded-xl bg-line-soft px-3.5 py-2.5 text-[15px] text-ink">
-        <span
-          className="whitespace-nowrap font-medium"
-          style={{ color: block.color }}
-        >
-          hey Block,
-        </span>
-        check the CI pipeline
-      </p>
-      <div className="flex items-center gap-2 self-end text-[13px] text-muted">
+      <Shot
+        src={composer}
+        alt="The app's composer with the line hey Block, check the CI pipeline typed in, a microphone button beside it"
+        frame={false}
+      />
+      <div className="flex flex-wrap items-center gap-2 self-end text-[13px] text-muted">
         or hold
         <kbd>Ctrl</kbd>
+        <kbd>Shift</kbd>
         <kbd>Space</kbd>
-        or type it
+        and say it
       </div>
-      <div className="mt-2 flex items-center gap-3 self-start rounded-lg border border-line bg-card py-2 pl-2 pr-3">
-        <CrewFace id="block" size={28} className="pixel" />
-        <span className="text-[13px]">
-          <b className="font-medium">Block</b>
-          <span
-            className="ml-2 inline-flex items-center gap-1.5 font-mono text-[11px]"
-            style={{ color: block.color }}
-          >
-            <i
-              className="h-[7px] w-[7px] rounded-full"
-              style={{ background: block.color }}
-            />
-            working
-          </span>
-        </span>
-      </div>
+      <Shot
+        src={sidebar}
+        alt="The agent list with Block selected and a spinner beside its name while it works"
+        className="mt-1 max-w-[230px]"
+        sizes="230px"
+      />
     </div>
   );
 }
 
 function BackDemo() {
-  const terminal = crewById.terminal;
+  const block = crewById.block;
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 rounded-panel border border-line bg-card p-3 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_30px_-16px_rgb(0_0_0/0.25)]">
-        <CrewFace id="terminal" size={32} className="pixel row-span-2" />
-        <div className="flex items-center gap-2 text-[13px] font-medium">
-          Terminal
-          <span className="inline-flex items-center gap-1 font-mono text-[10.5px] font-normal text-muted">
-            <BellIcon size={11} /> now
-          </span>
-        </div>
-        <p className="text-[13px] text-ink-2">
-          Two files in ci/ changed. Want the diff?
-        </p>
-        <div className="col-start-2 mt-2 flex gap-1.5">
-          <span className="rounded-md bg-ink px-2.5 py-1 text-[11px] font-medium text-white">
-            Show me
-          </span>
-          <span className="rounded-md border border-line px-2.5 py-1 text-[11px] font-medium text-ink-2">
-            Later
-          </span>
-        </div>
-      </div>
+      <Shot
+        src={reply}
+        alt="Block's reply: top-level folders build, docs, resources, scripts, src. Which one should I look into next? Then a row reading turn complete, 3 turns, $0.0422"
+      />
       <p className="flex items-center gap-2.5 self-start pl-1 text-[13px] text-muted">
         <span
           className="voice-meter is-playing inline-flex h-[12px] items-end gap-[2px]"
@@ -123,7 +72,7 @@ function BackDemo() {
             <i
               key={n}
               className="block h-[7px] w-[2px] rounded-sm"
-              style={{ background: terminal.color, "--n": n } as CSSProperties}
+              style={{ background: block.color, "--n": n } as CSSProperties}
             />
           ))}
         </span>
@@ -156,7 +105,7 @@ export function HowItWorks() {
               delay={i * 90}
               className="flex flex-col"
             >
-              <div className="flex flex-col justify-end md:min-h-[260px]">
+              <div className="flex flex-col justify-end md:min-h-[300px]">
                 <Demo />
               </div>
               <h3 className="mt-7 text-[20px] font-medium tracking-[-0.01em]">

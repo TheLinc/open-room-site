@@ -56,7 +56,7 @@ export const copy = {
         source: "Speech queue, native notifications",
       },
     ],
-    caption: "Demonstrations drawn for this page, not captures.",
+    caption: "Captured from the app on Windows, light theme.",
   },
 
   features: {
@@ -99,7 +99,7 @@ export const copy = {
         detail: "Quota banner · context meter",
       },
     ],
-    caption: "Drawn for this page.",
+    caption: "Captured from the app.",
   },
 
   openSource: {

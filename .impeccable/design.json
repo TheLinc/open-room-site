@@ -171,7 +171,7 @@
       "Do set every heading in Geist at weight 500 with negative tracking and no label above it.",
       "Do keep character motion in steps(1) and interface motion on cubic-bezier(0.16, 1, 0.3, 1); the rise entrance is 640ms from 14px below, opacity from 0, and every element renders visible by default so reduced motion and no-JavaScript show the finished state.",
       "Do draw icons in the page's own stroke set (icons.tsx) and put pixel art only on the crew faces, the desk sprites, the voice pill and the hero field.",
-      "Do caption any drawn product image in 12px mono muted as an illustration."
+      "Do caption product imagery in 12px mono muted: the hero window as an illustration, the section captures as captures from the app, cut to the element at 2x from the light theme."
     ],
     "donts": [
       "Don't fill a surface with an agent hue and set text on it; the ceiling behind text is a 9 percent wash.",
