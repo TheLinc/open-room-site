@@ -259,7 +259,7 @@ export function Features() {
         <div className="hidden md:block">
           <div className="sticky top-28">
             <div
-              className="relative min-h-[380px] rounded-[18px] border border-line p-8 pb-14 transition-colors duration-500"
+              className="relative min-h-[380px] rounded-[18px] border border-line p-8 transition-colors duration-500"
               style={{
                 background: `color-mix(in srgb, ${member.color} 6%, var(--color-card))`,
               }}
@@ -271,9 +271,6 @@ export function Features() {
               <div key={item.id} className="thread-in mt-8 max-w-[340px]">
                 <Panel color={member.color} />
               </div>
-              <p className="absolute bottom-5 left-8 font-mono text-[11px] text-muted">
-                {copy.features.caption}
-              </p>
             </div>
           </div>
         </div>
@@ -318,9 +315,6 @@ export function Features() {
           })}
         </ol>
       </div>
-      <p className="mt-6 font-mono text-xs text-muted md:hidden">
-        {copy.features.caption}
-      </p>
     </section>
   );
 }

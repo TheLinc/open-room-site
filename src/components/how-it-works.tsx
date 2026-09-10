@@ -128,24 +128,26 @@ function BackDemo() {
         <p className="text-[13px] leading-[1.5] text-ink">
           Two files changed in{" "}
           <span className="font-mono text-[12px]">ci/</span>. Want the diff?
+          <span
+            className="voice-meter is-playing ml-2 inline-flex h-[10px] items-center gap-[2px] align-middle"
+            aria-hidden="true"
+          >
+            {[0, 1, 2, 3].map((n) => (
+              <i
+                key={n}
+                className="block h-[6px] w-[2px] rounded-sm"
+                style={
+                  { background: terminal.color, "--n": n } as CSSProperties
+                }
+              />
+            ))}
+          </span>
         </p>
         <ThreadRow icon={<TerminalIcon size={13} />}>
           <span className="text-muted">Turn complete · 2 turns · $0.0186</span>
         </ThreadRow>
       </Sheet>
-      <p className="flex items-center gap-2.5 self-start pl-1 text-[13px] text-muted">
-        <span
-          className="voice-meter is-playing inline-flex h-[12px] items-end gap-[2px]"
-          aria-hidden="true"
-        >
-          {[0, 1, 2, 3, 4].map((n) => (
-            <i
-              key={n}
-              className="block h-[7px] w-[2px] rounded-sm"
-              style={{ background: terminal.color, "--n": n } as CSSProperties}
-            />
-          ))}
-        </span>
+      <p className="pl-1 text-[13px] text-muted">
         or said out loud, in its own voice
       </p>
     </div>
@@ -189,7 +191,6 @@ export function HowItWorks() {
           );
         })}
       </ol>
-      <p className="mt-10 font-mono text-xs text-muted">{copy.how.caption}</p>
     </section>
   );
 }
