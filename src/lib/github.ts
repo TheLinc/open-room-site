@@ -3,13 +3,13 @@ import { links } from "@/lib/copy";
 const repo = links.github.replace("https://github.com/", "");
 const headers = { Accept: "application/vnd.github+json" };
 
-/** The repo's star count, fetched at render and cached for an hour. Null when
+/** The repo's star count, fetched at render and cached for ten minutes. Null when
  *  GitHub is unreachable, so the page never shows a made-up number. */
 export async function getStars(): Promise<number | null> {
   try {
     const res = await fetch(`https://api.github.com/repos/${repo}`, {
       headers,
-      next: { revalidate: 3600 },
+      next: { revalidate: 600 },
     });
     if (!res.ok) return null;
     const data = (await res.json()) as { stargazers_count?: number };
@@ -39,12 +39,12 @@ export function windowsInstaller(releases: Release[]): string | null {
 }
 
 /** Where the download button goes: the newest Windows installer, or the
- *  releases list when GitHub can't be asked. Cached for an hour. */
+ *  releases list when GitHub can't be asked. Cached for ten minutes. */
 export async function getDownloadUrl(): Promise<string> {
   try {
     const res = await fetch(
       `https://api.github.com/repos/${repo}/releases?per_page=10`,
-      { headers, next: { revalidate: 3600 } },
+      { headers, next: { revalidate: 600 } },
     );
     if (!res.ok) return links.releases;
     const data = (await res.json()) as Release[];

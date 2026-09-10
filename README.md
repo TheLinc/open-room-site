@@ -27,7 +27,7 @@ Every push to `master` deploys production. Every other branch and pull request g
 
 ## Download links
 
-The download button asks the GitHub API for the newest published release at render time and links straight to its Windows installer (`open-room-<version>-setup.exe`, named by `electron-builder.yml` in the app repo). The answer is cached for an hour, and when GitHub can't be reached the button falls back to the releases list. GitHub's own `releases/latest` redirect is not used because it skips pre-releases, which is every 0.x release.
+The download button asks the GitHub API for the newest published release at render time and links straight to its Windows installer (`open-room-<version>-setup.exe`, named by `electron-builder.yml` in the app repo). The answer is cached for ten minutes, and when GitHub can't be reached the button falls back to the releases list. GitHub's own `releases/latest` redirect is not used because it skips pre-releases, which is every 0.x release.
 
 ## Art
 
