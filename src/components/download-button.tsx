@@ -1,5 +1,5 @@
 import { copy, links } from "@/lib/copy";
-import { WindowsIcon } from "@/components/icons";
+import { GitHubIcon, WindowsIcon } from "@/components/icons";
 
 // The one filled button on the page. The page resolves the installer from
 // GitHub at render, so a new release never needs a site change; without an
@@ -31,6 +31,7 @@ export function SourceButton({ className = "" }: { className?: string }) {
       href={links.github}
       className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-card px-5 text-[15px] font-medium text-ink transition-colors hover:bg-ground ${className}`}
     >
+      <GitHubIcon size={16} />
       {copy.hero.source}
     </a>
   );
