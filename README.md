@@ -25,6 +25,10 @@ Hosted on Vercel. Import the GitHub repo in the Vercel dashboard; it detects Nex
 
 Every push to `master` deploys production. Every other branch and pull request gets a preview URL.
 
+## Signup before release
+
+While `released` in `src/lib/release.ts` is `false`, the page shows an email signup instead of the download. Signups go to Resend as contacts. Set `RESEND_API_KEY`, and optionally `RESEND_SEGMENT_ID`, in `.env.local` for development and in the Vercel project settings for deployments. See `.env.example`. Set `released` to `true` to bring the download back.
+
 ## Download links
 
 The download button asks the GitHub API for the newest published release at render time and links straight to its Windows installer (`open-room-<version>-setup.exe`, named by `electron-builder.yml` in the app repo). The answer is cached for ten minutes, and when GitHub can't be reached the button falls back to the releases list. GitHub's own `releases/latest` redirect is not used because it skips pre-releases, which is every 0.x release.

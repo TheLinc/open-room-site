@@ -4,6 +4,7 @@ import { AppWindow } from "@/components/app-window";
 import { CrewDesks, DESKS_H, DESKS_W } from "@/components/crew-desks";
 import { DownloadButton, SourceButton } from "@/components/download-button";
 import { HeroField } from "@/components/hero-field";
+import { NotifyForm } from "@/components/notify-form";
 import { VoicePill } from "@/components/voice-pill";
 import { copy } from "@/lib/copy";
 import { crewById } from "@/lib/crew";
@@ -13,7 +14,8 @@ import { useTimeline } from "@/lib/use-timeline";
 // The first viewport: centred copy over the pixel field, then the app window
 // with the crew perched on its top edge. One clock drives the pill, the
 // desks and the thread; the field behind them is its own quiet thing.
-export function Hero({ download }: { download: string }) {
+// Without a download (Open Room not yet released) the email signup takes its place.
+export function Hero({ download }: { download: string | null }) {
   const { state, reduced } = useTimeline(heroStateAt, heroStill);
   const [verb, ...rest] = copy.hero.headline.split(" ");
 
@@ -38,13 +40,21 @@ export function Hero({ download }: { download: string }) {
         <p className="mt-3 max-w-[52ch] text-[17px] leading-[1.5] text-ink-2 md:text-[19px]">
           {copy.hero.lead}
         </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
-          <DownloadButton size="lg" href={download} />
-          <SourceButton />
-        </div>
-        <p className="mt-3 font-mono text-[13px] text-ink-2">
-          {copy.hero.under}
-        </p>
+        {download ? (
+          <>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+              <DownloadButton size="lg" href={download} />
+              <SourceButton />
+            </div>
+            <p className="mt-3 font-mono text-[13px] text-ink-2">
+              {copy.hero.under}
+            </p>
+          </>
+        ) : (
+          <NotifyForm id="notify" align="center" className="mt-5">
+            <SourceButton />
+          </NotifyForm>
+        )}
       </div>
 
       <div className="relative mx-auto mt-[96px] w-full max-w-[1040px] px-4 md:mt-[116px] md:px-6">

@@ -1,11 +1,13 @@
 import { CrewFace } from "@/components/crew-face";
 import { DownloadButton } from "@/components/download-button";
 import { ArrowIcon, GitHubIcon, StarIcon } from "@/components/icons";
+import { NotifyForm } from "@/components/notify-form";
 import { Reveal } from "@/components/reveal";
 import { CrewDesks, DESKS_H, DESKS_W } from "@/components/crew-desks";
 import { crew } from "@/lib/crew";
 import { copy, links } from "@/lib/copy";
 import { formatStars } from "@/lib/github";
+import { released } from "@/lib/release";
 
 export function OpenSource({ stars }: { stars: number | null }) {
   return (
@@ -90,7 +92,7 @@ export function Safety() {
   );
 }
 
-export function GetStarted({ download }: { download: string }) {
+export function GetStarted({ download }: { download: string | null }) {
   return (
     <section className="mx-auto max-w-[1120px] px-6 pt-32 md:pt-40">
       <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:gap-16">
@@ -99,7 +101,11 @@ export function GetStarted({ download }: { download: string }) {
             {copy.start.title}
           </h2>
           <div className="mt-8">
-            <DownloadButton size="lg" href={download} />
+            {download ? (
+              <DownloadButton size="lg" href={download} />
+            ) : (
+              <NotifyForm />
+            )}
           </div>
           <p className="mt-4 text-[14px] text-muted">{copy.start.platforms}</p>
         </Reveal>
@@ -150,9 +156,11 @@ export function Footer() {
           <a href={links.github} className="hover:text-ink">
             {copy.footer.github}
           </a>
-          <a href={links.releases} className="hover:text-ink">
-            {copy.footer.releases}
-          </a>
+          {released ? (
+            <a href={links.releases} className="hover:text-ink">
+              {copy.footer.releases}
+            </a>
+          ) : null}
         </nav>
       </div>
     </footer>

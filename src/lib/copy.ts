@@ -125,7 +125,7 @@ export const copy = {
     steps: [
       {
         title: "Install",
-        body: "Download the Windows installer from the latest release and run it.",
+        body: "Run the Windows installer.",
       },
       {
         title: "Sign in",
@@ -136,7 +136,7 @@ export const copy = {
         body: "Pick a name, a folder and a voice. Say hey and the name.",
       },
     ],
-    platforms: "Windows today. macOS is configured but not yet run on a Mac.",
+    platforms: "Windows first. macOS is configured but not yet run on a Mac.",
   },
 
   faq: {
@@ -163,6 +163,19 @@ export const copy = {
         a: "Permissions are per tool, with three states: ask, always allow, never allow. There is no bypass mode in the UI, including from voice.",
       },
     ],
+  },
+
+  /** Where the download goes while Open Room is in early development. */
+  form: {
+    header: "Get notified",
+    label: "Email address",
+    placeholder: "you@example.com",
+    button: "Notify me",
+    under: "Open Room is in early development. We'll email you when it's ready.",
+    ok: "You're on the list. We'll email you when Open Room is ready.",
+    already: "You're already on the list.",
+    invalid: "That doesn't look like an email address.",
+    failed: "Something went wrong. Try again in a moment.",
   },
 
   footer: {

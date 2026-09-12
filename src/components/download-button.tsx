@@ -29,7 +29,7 @@ export function SourceButton({ className = "" }: { className?: string }) {
   return (
     <a
       href={links.github}
-      className={`inline-flex h-11 items-center gap-2 rounded-lg border border-line bg-card px-5 text-[15px] font-medium text-ink transition-colors hover:bg-ground ${className}`}
+      className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-line bg-card px-5 text-[15px] font-medium text-ink transition-colors hover:bg-ground ${className}`}
     >
       {copy.hero.source}
     </a>

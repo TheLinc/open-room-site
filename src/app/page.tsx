@@ -6,9 +6,14 @@ import { Footer, GetStarted, OpenSource, Safety } from "@/components/sections";
 import { SiteHeader } from "@/components/site-header";
 import { copy, links } from "@/lib/copy";
 import { getDownloadUrl, getStars } from "@/lib/github";
+import { released } from "@/lib/release";
 
 export default async function Page() {
-  const [stars, download] = await Promise.all([getStars(), getDownloadUrl()]);
+  // No download until the first release; the page shows the email signup instead.
+  const [stars, download] = await Promise.all([
+    getStars(),
+    released ? getDownloadUrl() : null,
+  ]);
 
   // What search engines are told the page is about: a free Windows app.
   const jsonLd = {
@@ -19,7 +24,7 @@ export default async function Page() {
     url: links.site,
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Windows",
-    downloadUrl: download,
+    ...(download ? { downloadUrl: download } : {}),
     softwareHelp: links.github,
     license: "https://opensource.org/license/mit",
     isAccessibleForFree: true,

@@ -10,7 +10,7 @@ export function SiteHeader({
   download,
 }: {
   stars: number | null;
-  download: string;
+  download: string | null;
 }) {
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-ground/85 backdrop-blur">
@@ -62,7 +62,16 @@ export function SiteHeader({
               "GitHub"
             )}
           </a>
-          <DownloadButton href={download} />
+          {download ? (
+            <DownloadButton href={download} />
+          ) : (
+            <a
+              href="#notify"
+              className="inline-flex h-9 items-center whitespace-nowrap rounded-lg bg-ink px-3.5 text-sm font-medium text-white transition-colors hover:bg-ink-2"
+            >
+              {copy.form.header}
+            </a>
+          )}
         </nav>
       </div>
     </header>
