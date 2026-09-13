@@ -37,7 +37,9 @@ describe("NotifyForm", () => {
       copy.form.ok,
     );
     expect(joinWaitlist).toHaveBeenCalledWith("a@example.com");
-    expect(screen.queryByLabelText(copy.form.label)).toBeNull();
+    expect(
+      screen.getByLabelText(copy.form.label).closest("[inert]"),
+    ).not.toBeNull();
     expect(screen.getByText("source")).toBeDefined();
   });
 

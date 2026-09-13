@@ -7,7 +7,10 @@ import type { WaitlistResult } from "@/lib/waitlist";
 
 // Stands in for the download button until the first release. The email field
 // and the filled button share a row with anything passed as children; the
-// line under the row turns into the error or the confirmation.
+// line under the row turns into the error.
+//
+// The confirmation sits in the same grid cell as the field and crossfades in
+// over it, so the row keeps its size and the children beside it stay put.
 //
 // Plain state, not useActionState: an action's result commits as a
 // transition, and the hero timeline's per-frame updates hold transitions back
@@ -49,54 +52,73 @@ export function NotifyForm({
       onSubmit={submit}
       className={`flex w-full scroll-mt-24 flex-col gap-3 ${centred ? "items-center text-center" : ""} ${className}`}
     >
-      {done && !children ? null : (
-        <div
-          className={`flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:flex-wrap ${centred ? "sm:justify-center" : ""}`}
-        >
-          {done ? null : (
-            <>
-              <label htmlFor={inputId} className="sr-only">
-                {copy.form.label}
-              </label>
-              <input
-                id={inputId}
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                placeholder={copy.form.placeholder}
-                className="h-11 w-full rounded-lg border border-line bg-card px-3.5 text-[15px] text-ink placeholder:text-muted sm:w-64"
-              />
-              <button
-                type="submit"
-                disabled={pending}
-                className="inline-flex h-11 items-center justify-center whitespace-nowrap rounded-lg bg-ink px-5 text-[15px] font-medium text-white transition-colors hover:bg-ink-2 disabled:opacity-60"
-              >
-                {copy.form.button}
-              </button>
-            </>
-          )}
-          {children}
+      <div
+        className={`flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:flex-wrap ${centred ? "sm:justify-center" : ""}`}
+      >
+        <div data-done={done} className="notify-slot grid w-full sm:w-auto">
+          <div
+            inert={done}
+            className="notify-fields col-start-1 row-start-1 flex flex-col gap-2.5 sm:flex-row"
+          >
+            <label htmlFor={inputId} className="sr-only">
+              {copy.form.label}
+            </label>
+            <input
+              id={inputId}
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              placeholder={copy.form.placeholder}
+              className="h-11 w-full rounded-lg border border-line bg-card px-3.5 text-[15px] text-ink placeholder:text-muted sm:w-64"
+            />
+            <button
+              type="submit"
+              disabled={pending}
+              className="inline-flex h-11 items-center justify-center whitespace-nowrap rounded-lg bg-ink px-5 text-[15px] font-medium text-white transition-[background-color,opacity] duration-150 hover:bg-ink-2 disabled:opacity-60"
+            >
+              {copy.form.button}
+            </button>
+          </div>
+          <p
+            role="status"
+            className={`notify-done col-start-1 row-start-1 flex h-full min-h-11 items-center gap-2.5 rounded-lg border border-line bg-card px-3.5 text-[15px] text-ink ${centred ? "justify-center" : ""}`}
+          >
+            {done ? (
+              <>
+                <svg
+                  aria-hidden
+                  viewBox="0 0 20 20"
+                  className="notify-check size-5 shrink-0"
+                >
+                  <circle cx="10" cy="10" r="10" fill="var(--color-terminal)" />
+                  <path
+                    d="M6 10.4l2.6 2.6L14 7.6"
+                    pathLength={1}
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                {state.status === "already" ? copy.form.already : copy.form.ok}
+              </>
+            ) : null}
+          </p>
         </div>
-      )}
+        {children}
+      </div>
       <p
-        role={done ? "status" : undefined}
+        key={state.status === "error" ? "error" : "under"}
         aria-live="polite"
         className={
           state.status === "error"
-            ? "text-[14px] text-block"
-            : done
-              ? "text-[15px] text-ink"
-              : "text-[14px] text-ink-2"
+            ? "thread-in text-[14px] text-block"
+            : "text-[14px] text-ink-2"
         }
       >
-        {state.status === "error"
-          ? state.message
-          : state.status === "ok"
-            ? copy.form.ok
-            : state.status === "already"
-              ? copy.form.already
-              : copy.form.under}
+        {state.status === "error" ? state.message : copy.form.under}
       </p>
     </form>
   );

@@ -247,6 +247,67 @@ kbd {
   }
 }
 
+/* Signup confirmation. The field and the confirmation share one grid cell;
+   the states below hold without motion, the transitions only add it. */
+.notify-slot[data-done="true"] .notify-fields,
+.notify-slot[data-done="false"] .notify-done {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.notify-slot[data-done="false"] .notify-done {
+  transform: translateY(6px);
+}
+
+.notify-slot[data-done="true"] .notify-fields {
+  transform: scale(0.98);
+}
+
+.notify-check circle {
+  transform-origin: center;
+}
+
+.notify-check path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .notify-fields {
+    transition:
+      opacity 200ms cubic-bezier(0.4, 0, 1, 1),
+      transform 200ms cubic-bezier(0.4, 0, 1, 1),
+      visibility 0s linear 200ms;
+  }
+
+  .notify-slot[data-done="true"] .notify-done {
+    transition:
+      opacity 480ms cubic-bezier(0.16, 1, 0.3, 1) 140ms,
+      transform 480ms cubic-bezier(0.16, 1, 0.3, 1) 140ms;
+  }
+
+  .notify-slot[data-done="true"] .notify-check circle {
+    animation: notify-pop 420ms cubic-bezier(0.16, 1, 0.3, 1) 220ms both;
+  }
+
+  .notify-slot[data-done="true"] .notify-check path {
+    animation: notify-draw 320ms cubic-bezier(0.65, 0, 0.35, 1) 400ms both;
+  }
+}
+
+@keyframes notify-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes notify-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .crew-hand,
   .crew-cursor,

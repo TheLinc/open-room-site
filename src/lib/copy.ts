@@ -172,7 +172,7 @@ export const copy = {
     placeholder: "you@example.com",
     button: "Notify me",
     under: "Open Room is in early development. We'll email you when it's ready.",
-    ok: "You're on the list. We'll email you when Open Room is ready.",
+    ok: "You're on the list.",
     already: "You're already on the list.",
     invalid: "That doesn't look like an email address.",
     failed: "Something went wrong. Try again in a moment.",
